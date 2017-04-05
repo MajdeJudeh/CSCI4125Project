@@ -75,12 +75,14 @@ insert all
   into req_skill(ks_code, job_code) values (0003,0006)
   into req_skill(ks_code, job_code) values (0001,0007)
   into req_skill(ks_code, job_code) values (0004,0007)
+  into req_skill(ks_code, job_code) values (0005,0003)
   select * FROM dual;
   
 insert all
   into pref_skill(ks_code, job_code) values (0004,0001)
   into pref_skill(ks_code, job_code) values (0006,0001)
   into pref_skill(ks_code, job_code) values (0004,0003)
+  into pref_skill(ks_code, job_code) values (0005,0003)
   into pref_skill(ks_code, job_code) values (0007,0002)
   into pref_skill(ks_code, job_code) values (0003,0005)
   into pref_skill(ks_code, job_code) values (0005,0004)
