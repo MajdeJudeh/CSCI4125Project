@@ -31,29 +31,15 @@ FROM knowledge_skills NATURAL JOIN spec_rel NATURAL JOIN person
 WHERE per_id = 0001;
 --5 changed order to accomodate linking
 
+
 --6. List the skill gap of a worker between his/her jobs(s) and his/her skills.
 select first_name, last_name, job_title, skill_title as skill_lacked
-from (SELECT per_id, first_name, last_name, skill_title, job_title, company_name
-      FROM person Natural Join Experience natural join jobs natural join company natural join req_skill natural join knowledge_skills Ks NATURAL JOIN req_skill NATURAL JOIN jobs Jo Natural JOIN company)
+from (SELECT distinct per_id, ks_code 
+      FROM  req_skill natural join experience
       MINUS
-      SELECT per_id, first_name, last_name, job_code, skill_title, job_title, company_name
-      FROM (person Pe Inner join spec_rel Sr  on  Pe.per_id = Sr.per_id )NATURAL JOIN knowledge_skills Ks natural join experience natural join jobs Jo Natural JOIN company)     
-WHERE per_id = 0002;
-
-
-WITH person_skills (per_id, first_name, last_name, ks_code, skill_title) AS
-      ( SELECT per_id, first_name, last_name, ks_code, skill_title
-        FROM spec_rel NATURAL JOIN knowledge_skills NATURAL JOIN person
-        WHERE per_id = 0001)
-  ( SELECT per_id, first_name, last_name, job_code, ks_code, skill_title
-    FROM jc_rel NATURAL JOIN jobs NATURAL JOIN job_category 
-                NATURAL JOIN req_skill NATURAL JOIN experience
-                NATURAL JOIN person NATURAL JOIN spec_rel
-                NATURAL JOIN knowledge_skills
-    WHERE per_id = 0001) 
-  MINUS
-  ( SELECT person_skills.per_id, person_skills.first_name, person_skills.last_name, experience.job_code, person_skills.ks_code, person_skills.skill_title
-    FROM experience JOIN person_skills ON person_skills.per_id=experience.per_id);
+      SELECT distinct per_id, ks_code 
+      FROM spec_rel natural join experience) natural join person natural join experience Ex inner join jobs Jo on Ex.job_code = Jo.job_code  natural join knowledge_skills
+WHERE per_id = 0006;
 --6 I don't understand this. no changes made    
     
 --7. List the required knowledge/skills of a job/ a job category in a readable format. (two queries)
@@ -80,5 +66,23 @@ WHERE per_id = 0003 and job_code = 0002;
 -- resulting in all relevant info for skills people lack for jobs. Then, filters down to the specified person and job, 
 -- resulting in all relevant info for skills the specified person lacks, for the specified job.
       
+--9 List the courses(course id and title) that each alone teaches all the missing knowledge/skills for a person to pursue a specific job. 
+select Fn as c_code, Bn as title
+from (select c_code as Fn, title as Bn from course)
+where not exists( select *
+    from (SELECT ks_code as Ks
+          FROM (SELECT per_id, ks_code, job_code
+                FROM person, ((knowledge_skills Ks NATURAL JOIN req_skill NATURAL JOIN jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
+                INNER JOIN job_category Jc ON Jc.soc = Jr.soc)
+                MINUS
+                SELECT per_id, ks_code, job_code
+                FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
+                INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
+          WHERE per_id = 5 and job_code = 3) 
+    where not exists( select *
+      from course_skills C2
+      where C2.c_code = Fn and C2.ks_code = Ks)); 
+         
+--10 Suppose the skill gap of a worker and the requirement of a desired job can be covered by one course. Find the
+--   “quickest” solution for this worker. Show the course, section information and the completion date.
 
-                
