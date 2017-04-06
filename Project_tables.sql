@@ -80,7 +80,7 @@ CREATE TABLE pref_skill(
   );
 CREATE TABLE job_category(
   soc INTEGER,
-  title VARCHAR (20),
+  category_title VARCHAR (20),
   description VARCHAR(100),
   pay_range_high INTEGER,
   pay_range_low INTEGER,
@@ -112,7 +112,7 @@ CREATE TABLE ks_cluster(
   );
 CREATE TABLE course(
   c_code INTEGER, 
-  title VARCHAR(30),
+  course_title VARCHAR(30),
   course_level INTEGER,
   description VARCHAR(100),
   credits INTEGER,
@@ -190,4 +190,6 @@ CREATE TABLE experience(
   );
   
   
+  
+
   
