@@ -91,11 +91,11 @@ insert all
   select * FROM dual;
   
 insert all
-  into job_category(soc, title, description, pay_range_high, pay_range_low, parent_cate) values (1,'Software Development','programs programs', 70000, 50000, null)
-  into job_category(soc, title, description, pay_range_high, pay_range_low, parent_cate) values (2,'Software Engineer','programs programs with math', 90000, 65000, 1)
-  into job_category(soc, title, description, pay_range_high, pay_range_low, parent_cate) values (3,'Database Managment','manages databases', 90000, 65000, 1)
-  into job_category(soc, title, description, pay_range_high, pay_range_low, parent_cate) values (4,'Coffee Guy','makes cups of java for importent people', 90000, 15000, null)
-  into job_category(soc, title, description, pay_range_high, pay_range_low, parent_cate) values (5,'Computer Technician','fixes computers', 70000, 30000, null)
+  into job_category(soc, category_title, description, pay_range_high, pay_range_low, parent_cate) values (1,'Software Development','programs programs', 70000, 50000, null)
+  into job_category(soc, category_title, description, pay_range_high, pay_range_low, parent_cate) values (2,'Software Engineer','programs programs with math', 90000, 65000, 1)
+  into job_category(soc, category_title, description, pay_range_high, pay_range_low, parent_cate) values (3,'Database Managment','manages databases', 90000, 65000, 1)
+  into job_category(soc, category_title, description, pay_range_high, pay_range_low, parent_cate) values (4,'Coffee Guy','makes cups of java for importent people', 90000, 15000, null)
+  into job_category(soc, category_title, description, pay_range_high, pay_range_low, parent_cate) values (5,'Computer Technician','fixes computers', 70000, 30000, null)
   select * FROM dual;
 
 insert all
@@ -142,11 +142,11 @@ insert all
   select * FROM dual;
   
 insert all
-  into course(c_code, title, course_level, description, credits) values (1,'Intro to Java Programming',2100,'learn to use the java programming language',3)
-  into course(c_code, title, course_level, description, credits) values (2,'Intro to C++ Programming',2120,'learn to use the C++ programming language',3)
-  into course(c_code, title, course_level, description, credits) values (3,'Intro to SQL Programming',4567,'learn to use the SQL programming language',3)
-  into course(c_code, title, course_level, description, credits) values (4,'Data Structures',3100,'learn to use data structures and MVC',3)
-  into course(c_code, title, course_level, description, credits) values (5,'Intro to Computers',1000,'learn how to find the power button',3)
+  into course(c_code, course_title, course_level, description, credits) values (1,'Intro to Java Programming',2100,'learn to use the java programming language',3)
+  into course(c_code, course_title, course_level, description, credits) values (2,'Intro to C++ Programming',2120,'learn to use the C++ programming language',3)
+  into course(c_code, course_title, course_level, description, credits) values (3,'Intro to SQL Programming',4567,'learn to use the SQL programming language',3)
+  into course(c_code, course_title, course_level, description, credits) values (4,'Data Structures',3100,'learn to use data structures and MVC',3)
+  into course(c_code, course_title, course_level, description, credits) values (5,'Intro to Computers',1000,'learn how to find the power button',3)
   select * FROM dual;
   
 insert all
