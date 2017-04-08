@@ -189,22 +189,129 @@ where not exists(select Fn as c_code, Bn as course_title
 --14 Find the job with the highest pay rate for a person according to his/her skill qualification.
 --skipped for now
 
---15 List all the names along with the emails of the persons who are qualified for a job. 
-select distinct first_name, last_name, email
+--15 List all the names along with the emails of the persons who are qualified for a job.     
+select first_name, last_name, email
 from person Prsn
 where not exists( select *
     from (SELECT ks_code as Ks
-          FROM (SELECT per_id, ks_code, job_code
-                FROM person, ((knowledge_skills Ks NATURAL JOIN req_skill NATURAL JOIN jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
-                INNER JOIN job_category Jc ON Jc.soc = Jr.soc)
+          FROM (SELECT distinct per_id, ks_code, job_code
+                FROM person, req_skill Ks
                 MINUS
-                SELECT per_id, ks_code, job_code
-                FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
-                INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
+                SELECT distinct per_id, ks_code, job_code
+                FROM (person NATURAL JOIN spec_rel Sr), jobs)
           WHERE job_code = 2) 
     where not exists( select *
       from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
       where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)); 
 --15 END COMMENT
 
---16
+--verify following code, once connection is restored-----------------------------------------------------------------------------
+
+--16. When a company cannot find any qualified person for a job, a secondary solution is to find a person who is almost
+--qualified to the job. Make a “missing-one” list that lists people who miss only one skill for a specified job.
+select first_name, last_name, email
+from person Prsn
+where exists (select Ps, count(Ks)
+    from (SELECT distinct per_id Ps, ks_code as Ks
+          FROM (SELECT distinct per_id, ks_code, job_code
+                FROM person, req_skill  Ks
+                MINUS
+                SELECT distinct per_id, ks_code, job_code
+                FROM (person NATURAL JOIN spec_rel Sr), jobs)
+          WHERE job_code = 2)
+    where not exists( select *
+        from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
+        where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)
+    group by Ps
+    having count(Ks) = 1); 
+--16 END COMMENT
+
+--17. List the skillID and the number of people in the missing-one list for a given job code in the ascending order of the
+--people counts.
+
+select count(Pid)as PidC, ks_code
+from ((select distinct Pid, ks_code
+    from req_skill, (select distinct Prsn.per_id as Pid
+      from person Prsn
+      where exists (select Ps, count(Ks)
+          from (SELECT distinct per_id Ps, ks_code as Ks
+                FROM (SELECT distinct per_id, ks_code, job_code
+                      FROM person, req_skill  Ks
+                      MINUS
+                      SELECT distinct per_id, ks_code, job_code
+                      FROM (person NATURAL JOIN spec_rel Sr), jobs)
+                WHERE job_code = 4)
+          where not exists( select *
+              from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
+              where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)
+          group by Ps
+          having count(Ks) = 1))
+        where job_code = 4)
+    minus
+
+    (select distinct Pid, ks_code 
+    from(select distinct Prsn.per_id as Pid
+      from person Prsn
+      where exists (select Ps, count(Ks)
+          from (SELECT distinct per_id Ps, ks_code as Ks
+                FROM (SELECT distinct per_id, ks_code, job_code
+                      FROM person, req_skill  Ks
+                      MINUS
+                      SELECT distinct per_id, ks_code, job_code
+                      FROM (person NATURAL JOIN spec_rel Sr), jobs)
+                WHERE job_code = 4)
+          where not exists( select *
+              from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
+              where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)
+          group by Ps
+          having count(Ks) = 1)) inner join spec_rel on Pid = spec_rel.per_id))
+           
+group by ks_code
+order by PidC asc; 
+--17 END COMMENT
+
+--18. Suppose there is a new job that has nobody qualified. List the persons who miss the least number of skills and
+--report the “least number”. 
+
+select first_name, last_name, email, MsC as Missing_skill_count
+from person Prsn inner join (select Ps, count(Ks) Msc
+    from (SELECT distinct per_id Ps, ks_code as Ks
+          FROM (SELECT distinct per_id, ks_code, job_code
+                FROM person, req_skill  Ks
+                MINUS
+                SELECT distinct per_id, ks_code, job_code
+                FROM (person NATURAL JOIN spec_rel Sr), jobs)
+          WHERE job_code = 8)
+    where not exists( select *
+        from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
+        where P2.per_id = Ps and Sr.ks_code = Ks)
+    group by Ps
+    having count(Ks) = (SELECT distinct min(count(ks_code))
+          FROM (SELECT distinct per_id, ks_code, job_code
+                FROM person, req_skill  Ks
+                MINUS
+                SELECT distinct per_id, ks_code, job_code
+                FROM (person NATURAL JOIN spec_rel Sr), jobs)
+          WHERE job_code = 8
+          group by per_id)) on Prsn.per_id = Ps
+where exists (select Ps, count(Ks)
+    from (SELECT distinct per_id Ps, ks_code as Ks
+          FROM (SELECT distinct per_id, ks_code, job_code
+                FROM person, req_skill  Ks
+                MINUS
+                SELECT distinct per_id, ks_code, job_code
+                FROM (person NATURAL JOIN spec_rel Sr), jobs)
+          WHERE job_code = 8)
+    where not exists( select *
+        from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
+        where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)
+    group by Ps
+    having count(Ks) = (SELECT distinct min(count(ks_code))
+          FROM (SELECT distinct per_id, ks_code, job_code
+                FROM person, req_skill  Ks
+                MINUS
+                SELECT distinct per_id, ks_code, job_code
+                FROM (person NATURAL JOIN spec_rel Sr), jobs)
+          WHERE job_code = 8
+          group by per_id)); 
+--18 END COMMENT
