@@ -82,9 +82,30 @@ where not exists( select *
     where not exists( select *
       from course_skills C2
       where C2.c_code = Fn and C2.ks_code = Ks)); 
-         
+--9 END COMMENT
+
 --10 Suppose the skill gap of a worker and the requirement of a desired job can be covered by one course. Find the
---   “quickest” solution for this worker. Show the course, section information and the completion date.
+--   “quickest” solution for this worker. Show the course, section information and the completion date
+
+select Fn as c_code, Bn as course_title
+from (select cors.c_code as Fn, course_title as Bn, complete_date 
+    from course cors inner join section on section.c_code = cors.c_code) inner join (select c_code as secnc, min(complete_date) as min_cmplt
+       from section
+       group by c_code) on Fn = secnc and complete_date = min_cmplt
+where not exists( select *
+    from (SELECT ks_code as Ks
+          FROM (SELECT per_id, ks_code, job_code
+                FROM person, ((knowledge_skills Ks NATURAL JOIN req_skill NATURAL JOIN jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
+                INNER JOIN job_category Jc ON Jc.soc = Jr.soc)
+                MINUS
+                SELECT per_id, ks_code, job_code
+                FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
+                INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
+          WHERE per_id = 3 and job_code = 3) 
+    where not exists( select *
+    from course_skills C2
+    where C2.c_code = Fn and C2.ks_code = Ks)); 
+--10 END COMMENT
 
 --11 Find the cheapest course to make up one’s skill gap by showing the course to take and the cost (of the section price).
 select distinct Fn as c_code, Bn as course_title, Sec.price
@@ -102,13 +123,14 @@ where not exists( select *
     where not exists( select *
       from course_skills C2
       where C2.c_code = Fn and C2.ks_code = Ks));
-      
+--11 END COMMENT
+
 --12 If query #9 returns nothing, then find the course sets that their combination covers all the missing knowledge/
 -- skills for a person to pursue a specific job. The considered course sets will not include more than three courses.
 -- If multiple course sets are found, list the course sets (with their course IDs) in the order of the ascending order of
 -- the course sets’ total costs.
 select c_code, course_title
-from course natural join course_skills Cs inner join (SELECT ks_code Ks
+from course natural join course_skills Cs inner join (SELECT ks_code Ks, per_id
     FROM (SELECT per_id, ks_code, job_code
     FROM person, ((knowledge_skills Ks NATURAL JOIN req_skill NATURAL JOIN jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
     INNER JOIN job_category Jc ON Jc.soc = Jr.soc)
@@ -116,20 +138,73 @@ from course natural join course_skills Cs inner join (SELECT ks_code Ks
     SELECT per_id, ks_code, job_code
     FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
     INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
-    WHERE per_id = 0002 and job_code = 0003) on Ks = Cs.ks_code and not exists(select Fn as c_code, Bn as course_title
+    WHERE per_id = 0002 and job_code = 0003) on Ks = Cs.ks_code 
+where not exists(select Fn as c_code, Bn as course_title
     from (select c_code as Fn, course_title as Bn from course)
-    where not exists( select *
-        from (SELECT ks_code as Ks
-              FROM (SELECT per_id, ks_code, job_code
+        where not exists( select *
+            from (SELECT ks_code as Ks
+                FROM (SELECT per_id, ks_code, job_code
                     FROM person, ((knowledge_skills Ks NATURAL JOIN req_skill NATURAL JOIN jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
                     INNER JOIN job_category Jc ON Jc.soc = Jr.soc)
                     MINUS
                     SELECT per_id, ks_code, job_code
                     FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
                     INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
-              WHERE per_id = 2 and job_code = 3) 
-        where not exists( select *
-          from course_skills C2
-          where C2.c_code = Fn and C2.ks_code = Ks)));
+                WHERE per_id = 2 and job_code = 3) 
+            where not exists( select *
+              from course_skills C2
+              where C2.c_code = Fn and C2.ks_code = Ks))) and exists(select per_id
+    from course natural join course_skills Cs inner join (SELECT ks_code Ks, per_id
+        FROM (SELECT per_id, ks_code, job_code
+        FROM person, ((knowledge_skills Ks NATURAL JOIN req_skill NATURAL JOIN jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
+        INNER JOIN job_category Jc ON Jc.soc = Jr.soc)
+        MINUS
+        SELECT per_id, ks_code, job_code
+        FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
+        INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
+        WHERE per_id = 0002 and job_code = 0003) on Ks = Cs.ks_code 
+    where not exists(select Fn as c_code, Bn as course_title
+        from (select c_code as Fn, course_title as Bn from course)
+            where not exists( select *
+                from (SELECT ks_code as Ks
+                    FROM (SELECT per_id, ks_code, job_code
+                        FROM person, ((knowledge_skills Ks NATURAL JOIN req_skill NATURAL JOIN jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
+                        INNER JOIN job_category Jc ON Jc.soc = Jr.soc)
+                        MINUS
+                        SELECT per_id, ks_code, job_code
+                        FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
+                        INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
+                    WHERE per_id = 2 and job_code = 3) 
+                where not exists( select *
+                  from course_skills C2
+                  where C2.c_code = Fn and C2.ks_code = Ks)))
+    group by per_id
+    having count(c_code) <= 3);
+--12 It works, but 21 select statements... there's probably a more efficient way to do this
+--my own implementation, date complete: 4/7/2017, BONUS POINTS ^^
 
 --13 List all the job categories that a person is qualified for.
+--skipped for now
+
+--14 Find the job with the highest pay rate for a person according to his/her skill qualification.
+--skipped for now
+
+--15 List all the names along with the emails of the persons who are qualified for a job. 
+select distinct first_name, last_name, email
+from person Prsn
+where not exists( select *
+    from (SELECT ks_code as Ks
+          FROM (SELECT per_id, ks_code, job_code
+                FROM person, ((knowledge_skills Ks NATURAL JOIN req_skill NATURAL JOIN jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
+                INNER JOIN job_category Jc ON Jc.soc = Jr.soc)
+                MINUS
+                SELECT per_id, ks_code, job_code
+                FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
+                INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
+          WHERE job_code = 2) 
+    where not exists( select *
+      from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
+      where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)); 
+--15 END COMMENT
+
+--16
