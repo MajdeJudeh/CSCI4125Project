@@ -61,7 +61,7 @@ CREATE TABLE jobs(
   );
 CREATE TABLE knowledge_skills(
   ks_code INTEGER,
-  skill_title VARCHAR (15),
+  skill_title VARCHAR (30),
   description VARCHAR (100),
   skill_level INTEGER,
   PRIMARY KEY (ks_code)
@@ -188,8 +188,3 @@ CREATE TABLE experience(
   FOREIGN KEY (per_id) REFERENCES person(per_id),
   FOREIGN KEY (job_code) REFERENCES jobs(job_code)
   );
-  
-  
-  
-
-  
