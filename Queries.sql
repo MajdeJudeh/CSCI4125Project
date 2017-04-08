@@ -1,3 +1,7 @@
+/*
+ * all variables are denoted by a comment starting with "---variables:" at the end of the line
+ */
+ 
 -- 1. List a company's workers by names.
 SELECT First_name, Last_name--, first_name, last_name
 FROM (jobs Natural Join experience Ex)INNER JOIN person Ps on Ex.per_id = Ps.per_id
@@ -7,7 +11,7 @@ WHERE Ex.end_date is null ;
 -- 2. List a company's staff by salary in descending order.
 SELECT first_name, last_name, salary
 FROM (jobs NATURAL JOIN experience Ex) INNER JOIN person Ps on Ex.per_id = Ps.per_id
-WHERE comp_id = 002 and end_date is null
+WHERE comp_id = 002 and end_date is null                                          --- variables: comp_id
 ORDER BY salary DESC;
 --2 corrected to find current workers
 
@@ -22,13 +26,13 @@ ORDER BY CompanySalary DESC;
 --4. Find all the jobs a person is currently holding and worked in the past.
 SELECT job_code, start_date, end_date, salary, emp_mode, pay_rate, pay_type, company_name, city, state_abbr
 FROM experience Natural Join jobs natural join company
-WHERE per_id = 0007;
+WHERE per_id = 0007;                                                               --- variables: per_id
 --4 table inforces that start_date cannot be null
 
 --5. List a person's knowledge/skills in a readable format. 
 SELECT first_name, last_name, skill_title as skill
 FROM knowledge_skills NATURAL JOIN spec_rel NATURAL JOIN person
-WHERE per_id = 0001;
+WHERE per_id = 0001;                                                               --- variables: per_id
 --5 changed order to accomodate linking
 
 
@@ -39,7 +43,7 @@ from (SELECT distinct per_id, ks_code
       MINUS
       SELECT distinct per_id, ks_code 
       FROM spec_rel natural join experience) natural join person natural join experience Ex inner join jobs Jo on Ex.job_code = Jo.job_code  natural join knowledge_skills
-WHERE per_id = 0006;
+WHERE per_id = 0006;                                                               --- variables: per_id
 --6 I don't understand this. no changes made    
     
 --7. List the required knowledge/skills of a job/ a job category in a readable format. (two queries)
@@ -61,7 +65,7 @@ FROM (SELECT per_id, first_name, last_name, job_code, skill_title, job_title, co
       SELECT per_id, first_name, last_name, job_code, skill_title, job_title, company_name
       FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
       INNER JOIN job_category Jc ON Jc.soc = Jr.soc))
-WHERE per_id = 0003 and job_code = 0002;
+WHERE per_id = 0003 and job_code = 0002;                                        ---variables:  per_id , job_code
 --8 creates a pool of all relevant info for all people, associated with all jobs, then subtracts skills that people do have,
 -- resulting in all relevant info for skills people lack for jobs. Then, filters down to the specified person and job, 
 -- resulting in all relevant info for skills the specified person lacks, for the specified job.
@@ -78,7 +82,7 @@ where not exists( select *
                 SELECT per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
                 INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
-          WHERE per_id = 3 and job_code = 3) 
+          WHERE per_id = 3 and job_code = 3)                                    ---variables:  per_id , job_code 
     where not exists( select *
       from course_skills C2
       where C2.c_code = Fn and C2.ks_code = Ks)); 
@@ -101,7 +105,7 @@ where not exists( select *
                 SELECT per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
                 INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
-          WHERE per_id = 3 and job_code = 3) 
+          WHERE per_id = 3 and job_code = 3)                                    ---variables:  per_id , job_code 
     where not exists( select *
     from course_skills C2
     where C2.c_code = Fn and C2.ks_code = Ks)); 
@@ -119,7 +123,7 @@ where not exists( select *
                 SELECT per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
                 INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
-          WHERE per_id = 5 and job_code = 3) 
+          WHERE per_id = 5 and job_code = 3)                                    ---variables:  per_id , job_code 
     where not exists( select *
       from course_skills C2
       where C2.c_code = Fn and C2.ks_code = Ks));
@@ -138,7 +142,7 @@ from course natural join course_skills Cs inner join (SELECT ks_code Ks, per_id
     SELECT per_id, ks_code, job_code
     FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
     INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
-    WHERE per_id = 0002 and job_code = 0003) on Ks = Cs.ks_code 
+    WHERE per_id = 0002 and job_code = 0003) on Ks = Cs.ks_code                 ---variables:  per_id , job_code 
 where not exists(select Fn as c_code, Bn as course_title
     from (select c_code as Fn, course_title as Bn from course)
         where not exists( select *
@@ -150,7 +154,7 @@ where not exists(select Fn as c_code, Bn as course_title
                     SELECT per_id, ks_code, job_code
                     FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
                     INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
-                WHERE per_id = 2 and job_code = 3) 
+                WHERE per_id = 2 and job_code = 3)                              ---variables:  per_id , job_code 
             where not exists( select *
               from course_skills C2
               where C2.c_code = Fn and C2.ks_code = Ks))) and exists(select per_id
@@ -162,7 +166,7 @@ where not exists(select Fn as c_code, Bn as course_title
         SELECT per_id, ks_code, job_code
         FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
         INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
-        WHERE per_id = 0002 and job_code = 0003) on Ks = Cs.ks_code 
+        WHERE per_id = 0002 and job_code = 0003) on Ks = Cs.ks_code             ---variables:  per_id , job_code
     where not exists(select Fn as c_code, Bn as course_title
         from (select c_code as Fn, course_title as Bn from course)
             where not exists( select *
@@ -174,7 +178,7 @@ where not exists(select Fn as c_code, Bn as course_title
                         SELECT per_id, ks_code, job_code
                         FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr)
                         INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) 
-                    WHERE per_id = 2 and job_code = 3) 
+                    WHERE per_id = 2 and job_code = 3)                          ---variables:  per_id , job_code
                 where not exists( select *
                   from course_skills C2
                   where C2.c_code = Fn and C2.ks_code = Ks)))
@@ -199,13 +203,11 @@ where not exists( select *
                 MINUS
                 SELECT distinct per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE job_code = 2) 
+          WHERE job_code = 2)                                                   ---variables: job_code 
     where not exists( select *
       from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
       where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)); 
 --15 END COMMENT
-
---verify following code, once connection is restored-----------------------------------------------------------------------------
 
 --16. When a company cannot find any qualified person for a job, a secondary solution is to find a person who is almost
 --qualified to the job. Make a “missing-one” list that lists people who miss only one skill for a specified job.
@@ -218,12 +220,12 @@ where exists (select Ps, count(Ks)
                 MINUS
                 SELECT distinct per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE job_code = 2)
+          WHERE job_code = 2)                                                   ---variables: job_code 
     where not exists( select *
         from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
         where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)
     group by Ps
-    having count(Ks) = 1); 
+    having count(Ks) = 1);
 --16 END COMMENT
 
 --17. List the skillID and the number of people in the missing-one list for a given job code in the ascending order of the
@@ -240,13 +242,13 @@ from ((select distinct Pid, ks_code
                       MINUS
                       SELECT distinct per_id, ks_code, job_code
                       FROM (person NATURAL JOIN spec_rel Sr), jobs)
-                WHERE job_code = 4)
+                WHERE job_code = 4)                                             ---variables: job_code 
           where not exists( select *
               from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
               where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)
           group by Ps
           having count(Ks) = 1))
-        where job_code = 4)
+        where job_code = 4)                                                     ---variables: job_code 
     minus
 
     (select distinct Pid, ks_code 
@@ -259,7 +261,7 @@ from ((select distinct Pid, ks_code
                       MINUS
                       SELECT distinct per_id, ks_code, job_code
                       FROM (person NATURAL JOIN spec_rel Sr), jobs)
-                WHERE job_code = 4)
+                WHERE job_code = 4)                                             ---variables: job_code 
           where not exists( select *
               from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
               where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)
@@ -281,7 +283,7 @@ from person Prsn inner join (select Ps, count(Ks) Msc
                 MINUS
                 SELECT distinct per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE job_code = 8)
+          WHERE job_code = 8)                                                   ---variables: job_code 
     where not exists( select *
         from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
         where P2.per_id = Ps and Sr.ks_code = Ks)
@@ -292,7 +294,7 @@ from person Prsn inner join (select Ps, count(Ks) Msc
                 MINUS
                 SELECT distinct per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE job_code = 8
+          WHERE job_code = 8                                                    ---variables: job_code 
           group by per_id)) on Prsn.per_id = Ps
 where exists (select Ps, count(Ks)
     from (SELECT distinct per_id Ps, ks_code as Ks
@@ -301,7 +303,7 @@ where exists (select Ps, count(Ks)
                 MINUS
                 SELECT distinct per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE job_code = 8)
+          WHERE job_code = 8)                                                   ---variables: job_code 
     where not exists( select *
         from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id
         where P2.per_id = Prsn.per_id and Sr.ks_code = Ks)
@@ -312,6 +314,6 @@ where exists (select Ps, count(Ks)
                 MINUS
                 SELECT distinct per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE job_code = 8
+          WHERE job_code = 8                                                    ---variables: job_code 
           group by per_id)); 
 --18 END COMMENT
