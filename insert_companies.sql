@@ -51,6 +51,7 @@ insert all
   into jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0005, 'Full Time', 65000, 'Salary',0004 , 'Software Engineer','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/Software-Engineer-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Atlanta', 'GA', DATE '2017-04-01')
   into jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0006, 'Full Time', 72000, 'Salary',0005 , 'Software Developer','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/Software-Developer-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Townsville', 'AK', DATE '2016-12-29')
   into jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0007, 'Full Time', 120000, 'Salary',0006 , 'QA Tester','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/QA-tester-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Gotham', 'IA', DATE '2016-08-02')
+  into jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0008, 'Full Time', 115000, 'Salary',0006 , 'Software Engineer','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/QA-tester-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Washington D.C.', 'DC', DATE '2016-07-02')
   select * FROM dual;
   
 insert all
@@ -61,6 +62,8 @@ insert all
   into  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0005,'QA Testing','testing prgorams', 2)
   into  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0006,'Java(coffee)','making good coffee', 2)
   into  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0007,'Java(coffee)','making better coffee', 3)
+  into  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0008,'Reverse Engineering','Analize function of compiled applications', 2)
+  into  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0009,'Heuristics','Analyze and categorize software based on behaviours', 3)
   select * FROM dual;
   
 insert all
@@ -76,6 +79,11 @@ insert all
   into req_skill(ks_code, job_code) values (0001,0007)
   into req_skill(ks_code, job_code) values (0004,0007)
   into req_skill(ks_code, job_code) values (0005,0003)
+  into req_skill(ks_code, job_code) values (0001,0008)
+  into req_skill(ks_code, job_code) values (0005,0008)
+  into req_skill(ks_code, job_code) values (0004,0008)
+  into req_skill(ks_code, job_code) values (0008,0008)
+  into req_skill(ks_code, job_code) values (0009,0008)
   select * FROM dual;
   
 insert all
@@ -239,6 +247,7 @@ insert all
   into spec_rel(per_id,ks_code) values(2,4)
   into spec_rel(per_id,ks_code) values(2,3)
   into spec_rel(per_id,ks_code) values(2,7)
+  into spec_rel(per_id,ks_code) values(2,6)
   into spec_rel(per_id,ks_code) values(3,2)
   into spec_rel(per_id,ks_code) values(3,3)
   into spec_rel(per_id,ks_code) values(4,6)
