@@ -4,7 +4,6 @@ import java.math.*;
 import oracle.jdbc.*;
 
 public class QueryRunner{
-  private static Scanner input = new Scanner(System.in);
 
   public static void main(String[] args){
     if(args.length != 2){
