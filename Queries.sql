@@ -99,7 +99,7 @@ WHERE NOT EXISTS( SELECT *
 --9 END COMMENT
 
 --10 Suppose the skill gap of a worker and the requirement of a --desired job can be covered BY ONe course. Find the
---   �quickest� solution for this worker. Show the course,
+--   ?quickest? solution for this worker. Show the course,
 --section information and the completion date
 
 SELECT Fn AS c_code, Bn AS course_title
@@ -122,7 +122,7 @@ WHERE NOT EXISTS( SELECT *
     WHERE C2.c_code = Fn AND C2.ks_code = Ks));
 --10 END COMMENT
 
---11 Find the cheapest course to make up ONe�s skill gap BY
+--11 Find the cheapest course to make up ONe?s skill gap BY
 --showing the course to take and the cost (of the section
 --price).
 SELECT DISTINCT Fn AS c_code, Bn AS course_title, Sec.price
@@ -148,7 +148,7 @@ WHERE NOT EXISTS( SELECT *
 --course sets will NOT include more than three courses.
 -- If multiple course sets are found, list the course sets (with
 --their course IDs) in the ORDER of the ascending ORDER of
--- the course sets� total costs.
+-- the course sets? total costs.
 SELECT c_code, course_title
 FROM course NATURAL JOIN course_skills Cs INNER JOIN (SELECT ks_code Ks, per_id
     FROM (SELECT per_id, ks_code, job_code
@@ -206,6 +206,18 @@ WHERE NOT EXISTS(SELECT Fn AS c_code, Bn AS course_title
 
 --13 List all the job categories that a person is qualified for.
 --skipped for now
+SELECT first_name, last_name, email
+FROM job_category JCs
+WHERE NOT EXISTS( SELECT SOC AS SOCs
+    FROM (SELECT DISTINCT per_id, ks_code, SOC
+        FROM person, core_skill
+        MINUS
+        SELECT DISTINCT per_id, ks_code, SOC
+        FROM (person NATURAL JOIN spec_rel Sr), job_category)
+    WHERE per_id = 1 AND NOT EXISTS(SELECT *
+      FROM core_skill Cs INNER JOIN job_category J2 ON Cs.SOC = J2.SOC
+      WHERE JCs.SOC = J2.SOC AND Cs.SOC = SOCs));                                                           ---variables: per_id
+--13 END COMMENT, implemented my own solution 
 
 --14 Find the job with the highest pay rate for a person
 --according to his/her skill qualification.
@@ -230,7 +242,7 @@ WHERE NOT EXISTS( SELECT *
 
 --16. When a company canNOT find any qualified person for a job,
 --a secondary solution is to find a person who is almost
---qualified to the job. Make a �missing-one� list that lists
+--qualified to the job. Make a ?missing-one? list that lists
 --people who miss ONly ONe skill for a specified job.
 SELECT first_name, last_name, email
 FROM person Prsn
@@ -296,7 +308,7 @@ ORDER BY PidC asc;
 
 --18. Suppose there is a new job that has nobody qualified. List
 --the persons who miss the least number of skills and
---report the �least number�.
+--report the ?least number?.
 
 SELECT first_name, last_name, email, MsC AS Missing_skill_count
 FROM person Prsn INNER JOIN (SELECT Ps, COUNT(Ks) Msc
