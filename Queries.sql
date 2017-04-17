@@ -390,4 +390,4 @@ WHERE  JC.SOC = 1 AND EXISTS (SELECT Ps, COUNT(Ks)                              
     HAVING COUNT(Ks) = 1)                                                      ---variables: k
 GROUP BY M_Ks
 ORDER BY Person_Count DESC;
---20 ENd COMMENT
+--20 END COMMENT
