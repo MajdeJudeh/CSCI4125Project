@@ -440,18 +440,62 @@ public class Query{
           }
         }
         else if (userOption == 17){
-          System.out.println("17");
+          System.out.println("List the skillID and the number of people in the missing-one list for a given job code in the ascending order of the people counts.");
+          statstr = "select count(Pid)as PidC, ks_code " +
+          "from ((select distinct Pid, ks_code " +
+              "from req_skill, (select distinct Prsn.per_id as Pid " +
+                "from person Prsn " +
+                "where exists (select Ps, count(Ks) " +
+                    "from (SELECT distinct per_id Ps, ks_code as Ks " +
+                          "FROM (SELECT distinct per_id, ks_code, job_code " +
+                                "FROM person, req_skill  Ks " +
+                                "MINUS " +
+                                "SELECT distinct per_id, ks_code, job_code " +
+                                "FROM (person NATURAL JOIN spec_rel Sr), jobs) " +
+                          "WHERE job_code = ?) " +
+                    "where not exists( select * " +
+                        "from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id " +
+                        "where P2.per_id = Prsn.per_id and Sr.ks_code = Ks) " +
+                    "group by Ps " +
+                    "having count(Ks) = 1)) " +
+                  "where job_code = ?) " +
+              "minus " +
+              "(select distinct Pid, ks_code " +
+              "from(select distinct Prsn.per_id as Pid " +
+                "from person Prsn " +
+                "where exists (select Ps, count(Ks) " +
+                    "from (SELECT distinct per_id Ps, ks_code as Ks " +
+                          "FROM (SELECT distinct per_id, ks_code, job_code " +
+                                "FROM person, req_skill  Ks " +
+                                "MINUS " +
+                                "SELECT distinct per_id, ks_code, job_code " +
+                                "FROM (person NATURAL JOIN spec_rel Sr), jobs) " +
+                          "WHERE job_code = ?) " +
+                    "where not exists( select * " +
+                        "from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id " +
+                        "where P2.per_id = Prsn.per_id and Sr.ks_code = Ks) " +
+                    "group by Ps " +
+                    "having count(Ks) = 1)) inner join spec_rel on Pid = spec_rel.per_id)) " +
+          "group by ks_code " +
+          "order by PidC asc";
+
 
           pStmt = connection.prepareStatement(statstr);
+          System.out.println("Enter a job code.");
+          int jobCode = input.nextInt();
+          pStmt.setInt(1, jobCode);
+          pStmt.setInt(2, jobCode);
+          pStmt.setInt(3, jobCode);
           rs = pStmt.executeQuery();
 
           while(rs.next()){
-
+            int pIDCount = rs.getInt("PidC");
+            int ksCode = rs.getInt("ks_code");
+            System.out.println(pIDCount + "\t" + ksCode);
           }
         }
         else if (userOption == 18){
           System.out.println("18");
-
           pStmt = connection.prepareStatement(statstr);
           rs = pStmt.executeQuery();
 
