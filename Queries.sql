@@ -205,7 +205,6 @@ WHERE NOT EXISTS(SELECT Fn AS c_code, Bn AS course_title
 --my own implementation, date complete: 4/7/2017, BONUS POINTS
 
 --13 List all the job categories that a person is qualified for.
---skipped for now
 SELECT first_name, last_name, email
 FROM job_category JCs
 WHERE NOT EXISTS( SELECT SOC AS SOCs
