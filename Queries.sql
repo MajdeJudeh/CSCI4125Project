@@ -205,22 +205,60 @@ WHERE NOT EXISTS(SELECT Fn AS c_code, Bn AS course_title
 --my own implementation, date complete: 4/7/2017, BONUS POINTS
 
 --13 List all the job categories that a person is qualified for.
-SELECT SOC as Job_Category
-FROM job_category JCs
-WHERE NOT EXISTS( SELECT SOC AS SOCs
-    FROM (SELECT DISTINCT per_id, ks_code, SOC
-        FROM person, core_skill
-        MINUS
-        SELECT DISTINCT per_id, ks_code, SOC
-        FROM (person NATURAL JOIN spec_rel Sr), job_category)
-    WHERE per_id = 1 AND NOT EXISTS(SELECT *
-      FROM core_skill Cs INNER JOIN job_category J2 ON Cs.SOC = J2.SOC
-      WHERE JCs.SOC = J2.SOC AND Cs.SOC = SOCs));                                                           ---variables: per_id
+SELECT JCs.SOC as Job_Category
+FROM (job_category JCs INNER JOIN core_skill C1 ON JCs.SOC = C1.SOC)
+     INNER JOIN
+    (person Prsn Inner JOIN spec_rel Sr ON Sr.per_id = Prsn.per_id)
+    ON Sr.ks_code = C1.ks_code
+WHERE NOT EXISTS( SELECT *
+    FROM (SELECT per_id AS P1, SOC AS Ks
+          FROM (SELECT DISTINCT per_id, ks_code, SOC
+                FROM person, core_skill
+                MINUS
+                SELECT DISTINCT per_id, ks_code, SOC
+                FROM (person NATURAL JOIN spec_rel), job_category)
+          WHERE per_id = 3)                                                     ---variables: per_id
+    WHERE NOT EXISTS( SELECT *
+      FROM (core_skill Cs INNER JOIN spec_rel Sr ON Cs.ks_code = Sr.ks_code ) 
+          INNER JOIN person P2 ON Sr.per_id = P2.per_id
+      WHERE JCs.SOC = Cs.SOC AND Cs.SOC = Ks AND P2.per_id = Prsn.per_id AND P2.per_id = P1));                             
 --13 END COMMENT, implemented my own solution 
+
+
 
 --14 Find the job with the highest pay rate for a person
 --according to his/her skill qualification.
---skipped for now
+
+SELECT job_code
+FROM jobs Jo
+WHERE pay_rate = (SELECT MAX(pay_rate)
+    FROM jobs Jo
+    WHERE NOT EXISTS( SELECT *
+        FROM (SELECT Pid
+              FROM (SELECT DISTINCT per_id AS Pid, ks_code, job_code
+                    FROM person, req_skill Ks
+                    MINUS
+                    SELECT DISTINCT per_id, ks_code, job_code
+                    FROM (person NATURAL JOIN spec_rel Sr), jobs)
+              WHERE Pid = 3)                                                    ---variables: per_id
+        WHERE NOT EXISTS( SELECT *
+          FROM (person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id)
+              INNER JOIN req_skill Rs ON Rs.ks_code = Sr.ks_code
+          WHERE Jo.job_code = Rs.job_code AND P2.per_id = Pid))) 
+AND NOT EXISTS( SELECT *
+    FROM (SELECT Pid
+          FROM (SELECT DISTINCT per_id AS Pid, ks_code, job_code
+                FROM person, req_skill Ks
+                MINUS
+                SELECT DISTINCT per_id, ks_code, job_code
+                FROM (person NATURAL JOIN spec_rel Sr), jobs)
+          WHERE Pid = 3)                                                        ---variables: per_id
+    WHERE NOT EXISTS( SELECT *
+      FROM (person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id)
+          INNER JOIN req_skill Rs ON Rs.ks_code = Sr.ks_code
+      WHERE Jo.job_code = Rs.job_code AND P2.per_id = Pid));
+--14 END COMMENT, custom solution
+
 
 --15 List all the names along with the emails of the persons who
 --are qualified for a job.
