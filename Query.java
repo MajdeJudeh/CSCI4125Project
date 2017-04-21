@@ -6,9 +6,7 @@ import java.util.*;
 public class Query{
   private Connection connection;
   private Scanner input = new Scanner(System.in);
-  public Query(){
-
-  }
+  public Query(){}
   public Query(Connection conn){
     connection = conn;
   }
