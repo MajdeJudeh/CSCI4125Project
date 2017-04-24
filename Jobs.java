@@ -3,26 +3,25 @@ import java.sql.*;
 import java.math.*;
 import oracle.jdbc.*;
 
-public class Course{
+public class Jobs{
   private Connection connection;
   private Scanner input = new Scanner(System.in);
 
-  public Course(){}//end of default constructor
-
-  public Course(Connection conn){
+  public Jobs(Connection conn){
     connection = conn;
-  }//end of
+  }//end of jobs constructor
+
   public void insertRow(){
     PreparedStatement pStmt = null;
-    String insertStatement = "INSERT INTO course(c_code, course_title, course_level, " +
-                              "description, credits) values (?, ?, ?, ?, ?)";
+    String insertStatement = "INSERT INTO jobs(job_code, emp_mode, pay_rate, pay_type, comp_id" +
+                              "href, job_title, city, state_abbr, dateStr) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try{
       pStmt = connection.prepareStatement(insertStatement);
 
-      System.out.println("Enter the course's ID number");
+      System.out.println("Enter the job code");
       pStmt.setInt(1, input.nextInt());
 
-      System.out.println("Enter the course title");
+      System.out.println("Enter the type of employment full-time/part-time/internship/etc");
       pStmt.setString(2, input.nextLine());
 
       System.out.println("Enter the course level");
@@ -45,6 +44,7 @@ public class Course{
       }
     }
   }//end of insertRow
+
   public void deleteRow(){
     PreparedStatement pStmt = null;
     String deleteStatement = "DELETE FROM course WHERE c_code = ?";
@@ -65,4 +65,4 @@ public class Course{
       }
     }
   }//ebd of deleteRow
-}//end of Query class
+}//end of Jobs class

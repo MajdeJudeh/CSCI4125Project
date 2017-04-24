@@ -3,53 +3,54 @@ import java.sql.*;
 import java.math.*;
 import oracle.jdbc.*;
 
-public class JobCategory{
+public class KnowledgeSkills{
   private Connection connection;
   private Scanner input = new Scanner(System.in);
 
-  public JobCategory(Connection conn){
+
+
+  public KnowledgeSkills(Connection conn){
     connection = conn;
-  }//end of constructor
+  }//end of constructor with connection as parameter
 
   public void insertRow(){
     PreparedStatement pStmt = null;
-    String insertStatement = "INSERT INTO job_category(soc, category_title, description, " +
-    "pay_range_high, pay_range_low, parent_cate) values (?, ?, ?, ?, ?, ?)";
-
+    String insertStatement = "INSERT INTO knowledge_skills(ks_code, skill_title, " +
+                              "description, skill_level) values (?, ?, ?, ?)";
     try{
       pStmt = connection.prepareStatement(insertStatement);
 
-      System.out.println("Enter the SOC code.");
+      System.out.println("Enter the skill code.");
       pStmt.setInt(1, input.nextInt());
 
-      System.out.println("Enter the job category title");
+      System.out.println("Enter the skill title.");
       pStmt.setString(2, input.nextLine());
 
-      System.out.println("Enter the description");
+      System.out.println("Enter the skill description.");
       pStmt.setString(3, input.nextLine());
 
-      System.out.println("Enter the high pay range");
+      System.out.println("Enter the skill level.");
       pStmt.setInt(4, input.nextInt());
 
-      System.out.println("Enter the low pay range");
-      pStmt.setInt(5, input.nextInt());
-
-      System.out.println("Enter the parent category");
-      pStmt.setInt(6, input.nextInt());
-
       pStmt.executeUpdate();
-    }catch(SQLException e){
-      e.getMessage();
+    } catch (SQLException e){
+      System.out.println(e.getMessage());
+    } finally {
+      try{
+        if(pStmt != null) pStmt.close();
+      }catch (SQLException e){
+        System.out.println(e.getMessage());
+      }
     }
   }//end of insertRow
 
   public void deleteRow(){
     PreparedStatement pStmt = null;
-    String deleteStatement = "DELETE FROM job_category WHERE soc = ?";
+    String deleteStatement = "DELETE FROM knowledge_skills WHERE ks_code = ?";
     try{
       pStmt = connection.prepareStatement(deleteStatement);
 
-      System.out.println("Enter the SOC code you wish to delete");
+      System.out.println("Enter the skill code you wish to delete.");
       pStmt.setInt(1, input.nextInt());
 
       pStmt.executeUpdate();
@@ -63,4 +64,4 @@ public class JobCategory{
       }
     }
   }//ebd of deleteRow
-}//end of JobCategory
+}//end of KnowledgeSkills
