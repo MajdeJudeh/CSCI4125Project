@@ -1,7 +1,7 @@
 --Sean Naquin
 --Majde Judeh
 
---data insertion file
+--data table creation file
 
 CREATE TABLE company(
     comp_id INTEGER,
