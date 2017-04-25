@@ -1,3 +1,8 @@
+--Sean Naquin
+--Majde Judeh
+
+--data insertion file
+
 CREATE TABLE company(
     comp_id INTEGER,
     website VARCHAR(100),
