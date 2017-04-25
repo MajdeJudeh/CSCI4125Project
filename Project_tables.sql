@@ -116,6 +116,7 @@ CREATE TABLE course(
   course_level INTEGER,
   description VARCHAR(100),
   credits INTEGER,
+  active NUMERIC(1,0) NOT NULL,
   PRIMARY KEY (c_code)
   );
   
