@@ -157,11 +157,11 @@ INSERT ALL
   SELECT * FROM dual;
   
 INSERT ALL
-  INTO course(c_code, course_title, course_level, description, credits) values (1,'Intro to Java Programming',2100,'learn to use the java programming language',3)
-  INTO course(c_code, course_title, course_level, description, credits) values (2,'Intro to C++ Programming',2120,'learn to use the C++ programming language',3)
-  INTO course(c_code, course_title, course_level, description, credits) values (3,'Intro to SQL Programming',4567,'learn to use the SQL programming language',3)
-  INTO course(c_code, course_title, course_level, description, credits) values (4,'Data Structures',3100,'learn to use data structures and MVC',3)
-  INTO course(c_code, course_title, course_level, description, credits) values (5,'Intro to Computers',1000,'learn how to find the power button',3)
+  INTO course(c_code, course_title, course_level, description, credits, active) values (1,'Intro to Java Programming',2100,'learn to use the java programming language',3,1)
+  INTO course(c_code, course_title, course_level, description, credits, active) values (2,'Intro to C++ Programming',2120,'learn to use the C++ programming language',3,1)
+  INTO course(c_code, course_title, course_level, description, credits, active) values (3,'Intro to SQL Programming',4567,'learn to use the SQL programming language',3,1)
+  INTO course(c_code, course_title, course_level, description, credits, active) values (4,'Data Structures',3100,'learn to use data structures and MVC',3,1)
+  INTO course(c_code, course_title, course_level, description, credits, active) values (5,'Intro to Computers',1000,'learn how to find the power button',3,1)
   SELECT * FROM dual;
   
 INSERT ALL
@@ -276,9 +276,13 @@ INSERT ALL
   
 INSERT ALL
   INTO experience(per_id,job_code,start_date,end_date,salary) values(1,3,DATE '2016-04-01',null,39000)
-  INTO experience(per_id,job_code,start_date,end_date,salary) values(4,2,DATE '2016-03-27',DATE '2016-04-05',3000)
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(4,2,DATE '2016-03-27',DATE '2016-04-05',30000)
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(2,5,DATE '2016-03-27',DATE '2016-04-05',60000)
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(2,5,DATE '2016-04-05',null,65000)
   INTO experience(per_id,job_code,start_date,end_date,salary) values(4,2,DATE '2016-04-05',null,40000)
-  INTO experience(per_id,job_code,start_date,end_date,salary) values(6,3,DATE '2016-04-04',null,68000) 
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(6,3,DATE '2016-04-04',DATE '2016-08-14',58000) 
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(6,3,DATE '2016-08-14',null,68000) 
   INTO experience(per_id,job_code,start_date,end_date,salary) values(7,3,DATE '2016-04-05',DATE '2016-08-05',50000) 
-  INTO experience(per_id,job_code,start_date,end_date,salary) values(7,7,DATE '2016-08-07',null, 120000) 
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(7,7,DATE '2016-08-07',DATE '2016-12-13', 100000) 
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(7,7,DATE '2016-12-13',null, 120000) 
   SELECT * FROM dual; 

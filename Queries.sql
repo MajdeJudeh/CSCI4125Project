@@ -208,7 +208,7 @@ WHERE NOT EXISTS(SELECT Fn AS c_code, Bn AS course_title
 SELECT JCs.SOC as Job_Category
 FROM (job_category JCs INNER JOIN core_skill C1 ON JCs.SOC = C1.SOC)
      INNER JOIN
-    (person Prsn Inner JOIN spec_rel Sr ON Sr.per_id = Prsn.per_id)
+    (person Prsn INNER JOIN spec_rel Sr ON Sr.per_id = Prsn.per_id)
     ON Sr.ks_code = C1.ks_code
 WHERE NOT EXISTS( SELECT *
     FROM (SELECT per_id AS P1, SOC AS Ks
@@ -415,7 +415,7 @@ ORDER BY Jo.job_code;
 --in Question 19. Find every skill that is needed by at least one person in the
 --given missing-k list. List each skillID and the number of people who need it
 --in the descending order of the people counts
-SELECT count(distinct Prsn) AS Person_Count, M_Ks AS Missing_Skill
+SELECT count(DISTINCT Prsn) AS Person_Count, M_Ks AS Missing_Skill
 FROM ((jobs Jo INNER JOIN JC_rel Jc ON Jo.job_code = Jc.job_code)INNER JOIN
     (SELECT DISTINCT per_id Prsn, ks_code AS M_Ks, job_code AS Jcode
           FROM (SELECT DISTINCT per_id, ks_code, job_code
@@ -436,7 +436,99 @@ WHERE  JC.SOC = 1 AND EXISTS (SELECT Ps, COUNT(Ks)                              
         FROM person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id
         WHERE P2.per_id = Prsn AND Sr.ks_code = Ks)
     GROUP BY Ps
-    HAVING COUNT(Ks) = 1)                                                      ---variables: k
+    HAVING COUNT(Ks) = 1)                                                       ---variables: k
 GROUP BY M_Ks
 ORDER BY Person_Count DESC;
 --20 END COMMENT
+
+
+--21. In a local or national crisis, we need to find all the people who once 
+--held a job of the special job category identifier.
+SELECT  DISTINCT per_id
+FROM experience INNER JOIN jc_rel USING (job_code) NATURAL JOIN job_category
+WHERE SOC = 3;                                                                  ---variables: SOC 
+--21 END COMMENT
+
+--22. Find all the unemployed people who once held a job of the 
+--given job identifier.
+SELECT *
+FROM experience
+WHERE job_code = 2 AND end_date IS NOT NULL;                                    ---variables: job_code
+--22 END COMMENT
+
+--23. Find out the biggest employer in terms of number of employees or 
+--the total amount of salaries and wages paid to employees.
+SELECT comp_id
+FROM jobs NATURAL JOIN experience
+WHERE end_date IS NULL 
+GROUP BY comp_id
+HAVING SUM(salary) = (SELECT MAX(SUM(salary)) 
+        FROM jobs NATURAL JOIN experience
+        WHERE end_date IS NULL
+        GROUP BY comp_id); 
+--23 END COMMENT
+
+--24. Find out the job distribution among business sectors; find out the 
+--biggest sector in terms of number of employees or the total amount of 
+--salaries and wages paid to employees.
+SELECT SOC
+FROM job_category NATURAL JOIN jc_rel NATURAL JOIN experience
+WHERE end_date IS NULL 
+GROUP BY SOC
+HAVING SUM(salary) = (SELECT MAX(SUM(salary)) 
+        FROM job_category NATURAL JOIN jc_rel NATURAL JOIN experience
+        WHERE end_date IS NULL
+        GROUP BY SOC); 
+--24 END COMMENT 
+
+--25. Find out the ratio between the people whose earnings increase and 
+--those whose earning decrease; find the average rate of earning improvement 
+--for the workers in a specific business sector. 
+SELECT AVG(end_sal - start_sal ) AS Average_Salary_Increase
+FROM jc_rel Jr INNER JOIN ((SELECT per_id pid2, job_code Jc2,  salary AS end_sal
+          FROM experience Exp2
+          WHERE end_date IS NULL
+          GROUP BY per_id, job_code, start_date, salary) 
+      INNER JOIN 
+          (SELECT per_id pid, job_code Jc,  salary AS start_sal
+          FROM experience Exp2
+          WHERE end_date IS NOT NULL
+          GROUP BY per_id, job_code, start_date, salary
+          HAVING start_date = (SELECT MIN(start_date)
+              FROM experience Exp3
+              WHERE Exp2.per_id = EXP3.per_id AND Exp2.job_code = EXP3.job_code AND end_date IS NOT NULL
+              GROUP BY per_id, job_code)) 
+      ON (pid2 = pid AND Jc2 = Jc)) ON (Jc = Jr.job_code) NATURAL JOIN job_category
+WHERE SOC = 2                                                                   ---variables: SOC
+GROUP BY SOC;
+--25 END COMMENT
+
+--26. Find the leaf-node job categories that have the most openings due to 
+--lack of qualified workers. If there are many opening jobs of a job category 
+--but at the same time there are many qualified jobless people. Then training 
+--cannot help fill up this type of job. What we want to find is such a job 
+--category that has the largest difference between vacancies (the unfilled 
+--jobs of this category) and the number of jobless people who are qualified 
+--for the jobs of his category.
+
+SELECT distinct SOC
+FROM (jc_rel Jr INNER JOIN jobs MJL ON MJL.job_code = Jr.job_code) 
+  INNER JOIN (SELECT job_code Jc, COUNT(DISTINCT per_id) Ct, MAX(Ct) Mct
+    FROM person Prsn, jobs
+    WHERE EXISTS (SELECT Ps, COUNT(Ks)
+        FROM (SELECT DISTINCT per_id Ps, ks_code AS Ks
+              FROM (SELECT DISTINCT per_id, ks_code, job_code
+                    FROM person, req_skill  Ks
+                    MINUS
+                    SELECT DISTINCT per_id, ks_code, job_code
+                    FROM (person NATURAL JOIN spec_rel Sr), jobs)
+              WHERE job_code = MJL.job_code)                                                
+        WHERE NOT EXISTS( SELECT *
+            FROM person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id
+            WHERE P2.per_id = Prsn.per_id AND Sr.ks_code = Ks)
+        GROUP BY Ps
+        HAVING COUNT(Ks) > 0)
+        GROUP BY Jc) ON MJL.job_code = Jc        
+GROUP BY SOC
+HAVING SUM(Mct) = SUM(Ct);
+--26 END COMMENT
