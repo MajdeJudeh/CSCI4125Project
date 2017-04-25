@@ -499,7 +499,7 @@ FROM jc_rel Jr INNER JOIN ((SELECT per_id pid2, job_code Jc2,  salary AS end_sal
               WHERE Exp2.per_id = EXP3.per_id AND Exp2.job_code = EXP3.job_code AND end_date IS NOT NULL
               GROUP BY per_id, job_code)) 
       ON (pid2 = pid AND Jc2 = Jc)) ON (Jc = Jr.job_code) NATURAL JOIN job_category
-WHERE SOC = 2
+WHERE SOC = 2                                                                   ---variables: SOC
 GROUP BY SOC;
 --25 END COMMENT
 
