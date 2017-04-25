@@ -509,4 +509,26 @@ GROUP BY SOC;
 --cannot help fill up this type of job. What we want to find is such a job 
 --category that has the largest difference between vacancies (the unfilled 
 --jobs of this category) and the number of jobless people who are qualified 
---for the jobs of 
+--for the jobs of his category.
+
+SELECT distinct SOC
+FROM (jc_rel Jr INNER JOIN jobs MJL ON MJL.job_code = Jr.job_code) 
+  INNER JOIN (SELECT job_code Jc, COUNT(DISTINCT per_id) Ct, MAX(Ct) Mct
+    FROM person Prsn, jobs
+    WHERE EXISTS (SELECT Ps, COUNT(Ks)
+        FROM (SELECT DISTINCT per_id Ps, ks_code AS Ks
+              FROM (SELECT DISTINCT per_id, ks_code, job_code
+                    FROM person, req_skill  Ks
+                    MINUS
+                    SELECT DISTINCT per_id, ks_code, job_code
+                    FROM (person NATURAL JOIN spec_rel Sr), jobs)
+              WHERE job_code = MJL.job_code)                                                
+        WHERE NOT EXISTS( SELECT *
+            FROM person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id
+            WHERE P2.per_id = Prsn.per_id AND Sr.ks_code = Ks)
+        GROUP BY Ps
+        HAVING COUNT(Ks) > 0)
+        GROUP BY Jc) ON MJL.job_code = Jc        
+GROUP BY SOC
+HAVING SUM(Mct) = SUM(Ct);
+--26 END COMMENT
