@@ -156,7 +156,7 @@ FROM course NATURAL JOIN course_skills Cs INNER JOIN (SELECT ks_code Ks, per_id
     SELECT per_id, ks_code, job_code
     FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo NATURAL JOIN company NATURAL JOIN jc_rel Jr)
     INNER JOIN job_category Jc ON Jc.soc = Jr.soc))
-    WHERE per_id = 0002 AND job_code = 0003) ON Ks = Cs.ks_code                 ---variables:  per_id , job_code
+    WHERE per_id = ? AND job_code = ?) ON Ks = Cs.ks_code                 ---variables:  per_id(test on 2) , job_code(test on 3)
 WHERE NOT EXISTS(SELECT Fn AS c_code, Bn AS course_title
     FROM (SELECT c_code AS Fn, course_title AS Bn FROM course)
         WHERE NOT EXISTS( SELECT *
@@ -168,7 +168,7 @@ WHERE NOT EXISTS(SELECT Fn AS c_code, Bn AS course_title
                     SELECT per_id, ks_code, job_code
                     FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo NATURAL JOIN company NATURAL JOIN jc_rel Jr)
                     INNER JOIN job_category Jc ON Jc.soc = Jr.soc))
-                WHERE per_id = 2 AND job_code = 3)                              ---variables:  per_id , job_code
+                WHERE per_id = ? AND job_code = ?)                              ---variables:  per_id(test on 2) , job_code(test on 3)
             WHERE NOT EXISTS( SELECT *
               FROM course_skills C2
               WHERE C2.c_code = Fn AND C2.ks_code = Ks))) AND EXISTS(SELECT per_id
@@ -180,7 +180,7 @@ WHERE NOT EXISTS(SELECT Fn AS c_code, Bn AS course_title
         SELECT per_id, ks_code, job_code
         FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo NATURAL JOIN company NATURAL JOIN jc_rel Jr)
         INNER JOIN job_category Jc ON Jc.soc = Jr.soc))
-        WHERE per_id = 0002 AND job_code = 0003) ON Ks = Cs.ks_code             ---variables:  per_id , job_code
+        WHERE per_id = ? AND job_code = ?) ON Ks = Cs.ks_code             ---variables:  per_id(test on 2) , job_code(test on 3)
     WHERE NOT EXISTS(SELECT Fn AS c_code, Bn AS course_title
         FROM (SELECT c_code AS Fn, course_title AS Bn FROM course)
             WHERE NOT EXISTS( SELECT *
@@ -192,7 +192,7 @@ WHERE NOT EXISTS(SELECT Fn AS c_code, Bn AS course_title
                         SELECT per_id, ks_code, job_code
                         FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo NATURAL JOIN company NATURAL JOIN jc_rel Jr)
                         INNER JOIN job_category Jc ON Jc.soc = Jr.soc))
-                    WHERE per_id = 2 AND job_code = 3)                          ---variables:  per_id , job_code
+                    WHERE per_id = ? AND job_code = ?)                          ---variables:  per_id(test on 2) , job_code(test on 3)
                 WHERE NOT EXISTS( SELECT *
                   FROM course_skills C2
                   WHERE C2.c_code = Fn AND C2.ks_code = Ks)))
@@ -211,7 +211,7 @@ WHERE NOT EXISTS(SELECT ks_code
     MINUS
     SELECT ks_code
     FROM spec_rel
-    WHERE per_id = 6)                                                           ---variables:  per_id(test on 6)                     
+    WHERE per_id = ?)                                                           ---variables:  per_id(test on 6)                     
 --13 END COMMENT, implemented my own solution 
 
 
@@ -229,7 +229,7 @@ WHERE pay_rate = (SELECT MAX(pay_rate)
                     MINUS
                     SELECT DISTINCT per_id, ks_code, job_code
                     FROM (person NATURAL JOIN spec_rel Sr), jobs)
-              WHERE Pid = 3)                                                    ---variables: per_id
+              WHERE Pid = ?)                                                    ---variables: per_id(test on 3)
         WHERE NOT EXISTS( SELECT *
           FROM (person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id)
               INNER JOIN req_skill Rs ON Rs.ks_code = Sr.ks_code
@@ -241,7 +241,7 @@ AND NOT EXISTS( SELECT *
                 MINUS
                 SELECT DISTINCT per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE Pid = 3)                                                        ---variables: per_id
+          WHERE Pid = ?)                                                        ---variables: per_id(test on 3)
     WHERE NOT EXISTS( SELECT *
       FROM (person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id)
           INNER JOIN req_skill Rs ON Rs.ks_code = Sr.ks_code
@@ -301,13 +301,13 @@ FROM ((SELECT DISTINCT Pid, ks_code
                       MINUS
                       SELECT DISTINCT per_id, ks_code, job_code
                       FROM (person NATURAL JOIN spec_rel Sr), jobs)
-                WHERE job_code = 4)                                             ---variables: job_code
+                WHERE job_code = ?)                                             ---variables: job_code(test on 4)
           WHERE NOT EXISTS( SELECT *
               FROM person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id
               WHERE P2.per_id = Prsn.per_id AND Sr.ks_code = Ks)
           GROUP BY Ps
           HAVING COUNT(Ks) = 1))
-        WHERE job_code = 4)                                                     ---variables: job_code
+        WHERE job_code = ?)                                                     ---variables: job_code(test on 4)
     MINUS
 
     (SELECT DISTINCT Pid, ks_code
@@ -320,7 +320,7 @@ FROM ((SELECT DISTINCT Pid, ks_code
                       MINUS
                       SELECT DISTINCT per_id, ks_code, job_code
                       FROM (person NATURAL JOIN spec_rel Sr), jobs)
-                WHERE job_code = 4)                                             ---variables: job_code
+                WHERE job_code = ?)                                             ---variables: job_code(test on 4)
           WHERE NOT EXISTS( SELECT *
               FROM person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id
               WHERE P2.per_id = Prsn.per_id AND Sr.ks_code = Ks)
@@ -343,7 +343,7 @@ FROM person Prsn INNER JOIN (SELECT Ps, COUNT(Ks) Msc
                 MINUS
                 SELECT DISTINCT per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE job_code = 8)                                                   ---variables: job_code
+          WHERE job_code = ?)                                                   ---variables: job_code(test on 8)
     WHERE NOT EXISTS( SELECT *
         FROM person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id
         WHERE P2.per_id = Ps AND Sr.ks_code = Ks)
@@ -354,7 +354,7 @@ FROM person Prsn INNER JOIN (SELECT Ps, COUNT(Ks) Msc
                 MINUS
                 SELECT DISTINCT per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE job_code = 8                                                    ---variables: job_code
+          WHERE job_code = ?                                                    ---variables: job_code(test on 8)
           GROUP BY per_id)) ON Prsn.per_id = Ps
 WHERE EXISTS (SELECT Ps, COUNT(Ks)
     FROM (SELECT DISTINCT per_id Ps, ks_code AS Ks
@@ -363,7 +363,7 @@ WHERE EXISTS (SELECT Ps, COUNT(Ks)
                 MINUS
                 SELECT DISTINCT per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE job_code = 8)                                                   ---variables: job_code
+          WHERE job_code = ?)                                                   ---variables: job_code(test on 8)
     WHERE NOT EXISTS( SELECT *
         FROM person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id
         WHERE P2.per_id = Prsn.per_id AND Sr.ks_code = Ks)
@@ -374,7 +374,7 @@ WHERE EXISTS (SELECT Ps, COUNT(Ks)
                 MINUS
                 SELECT DISTINCT per_id, ks_code, job_code
                 FROM (person NATURAL JOIN spec_rel Sr), jobs)
-          WHERE job_code = 8                                                    ---variables: job_code
+          WHERE job_code = ?                                                    ---variables: job_code(test on 8)
           GROUP BY per_id));
 --18 END COMMENT
 
