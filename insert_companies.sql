@@ -52,11 +52,12 @@ INSERT ALL
   INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0001, 'Full Time', 60000, 'Salary',0001 , 'Help Desk Technician','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/Help-Desk-Technician-7e6c820a31c1167d?fccid=564040c6a12a690f', 'New Orleans', 'LA', DATE '2017-02-05')
   INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0002, 'Full Time', 40000, 'Salary',0001 , 'Coffee Guy','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/Executive-Coffee-Maker-7e6c820j9838rw2d?fccid=564040c6a12a690f', 'New Orleans', 'LA', DATE '2016-03-05')
   INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0003, 'Internship', 45000, 'Salary',0002 , 'Back-end Developer','https://www.indeed.com/company/GE/jobs/back-end-developer-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Sacramento', 'CA', DATE '2016-02-07')
-  INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0004, 'Part Time', 60000, 'Hourly',0003 , 'Software Making Guy','https://www.indeed.com/company/ACI-Federal/jobs/Software-Making-Guy-7e6c820a31c1167d?fccid=564040c6a12a690f', 'New York', 'NY', DATE '2017-02-05')
+  INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0004, 'Part Time', 15, 'Hourly',0003 , 'Software Making Guy','https://www.indeed.com/company/ACI-Federal/jobs/Software-Making-Guy-7e6c820a31c1167d?fccid=564040c6a12a690f', 'New York', 'NY', DATE '2017-02-05')
   INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0005, 'Full Time', 65000, 'Salary',0004 , 'Software Engineer','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/Software-Engineer-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Atlanta', 'GA', DATE '2017-04-01')
   INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0006, 'Full Time', 72000, 'Salary',0005 , 'Software Developer','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/Software-Developer-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Townsville', 'AK', DATE '2016-12-29')
   INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0007, 'Full Time', 120000, 'Salary',0006 , 'QA Tester','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/QA-tester-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Gotham', 'IA', DATE '2016-08-02')
   INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0008, 'Full Time', 115000, 'Salary',0006 , 'Software Engineer','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/QA-tester-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Washington D.C.', 'DC', DATE '2016-07-02')
+  INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0009, 'Full Time', 300000, 'Salary',0003 , 'Very Cold Software Engineer','https://www.indeed.com/company/Noone-Reads-These-Anyway167d?fccid=564040c6a12a690f', 'Antarctica', 'DC', DATE '2014-01-05')
   SELECT * FROM dual;
   
 INSERT ALL
@@ -89,6 +90,15 @@ INSERT ALL
   INTO req_skill(ks_code, job_code) values (0004,0008)
   INTO req_skill(ks_code, job_code) values (0008,0008)
   INTO req_skill(ks_code, job_code) values (0009,0008)
+  INTO req_skill(ks_code, job_code) values (0001,0009)
+  INTO req_skill(ks_code, job_code) values (0002,0009)
+  INTO req_skill(ks_code, job_code) values (0003,0009)
+  INTO req_skill(ks_code, job_code) values (0004,0009)
+  INTO req_skill(ks_code, job_code) values (0005,0009)
+  INTO req_skill(ks_code, job_code) values (0006,0009)
+  INTO req_skill(ks_code, job_code) values (0007,0009)
+  INTO req_skill(ks_code, job_code) values (0008,0009)
+  INTO req_skill(ks_code, job_code) values (0009,0009)
   SELECT * FROM dual;
   
 INSERT ALL
@@ -101,6 +111,15 @@ INSERT ALL
   INTO pref_skill(ks_code, job_code) values (0005,0004)
   INTO pref_skill(ks_code, job_code) values (0001,0006)
   INTO pref_skill(ks_code, job_code) values (0002,0007)
+  INTO pref_skill(ks_code, job_code) values (0001,0009)
+  INTO pref_skill(ks_code, job_code) values (0002,0009)
+  INTO pref_skill(ks_code, job_code) values (0003,0009)
+  INTO pref_skill(ks_code, job_code) values (0004,0009)
+  INTO pref_skill(ks_code, job_code) values (0005,0009)
+  INTO pref_skill(ks_code, job_code) values (0006,0009)
+  INTO pref_skill(ks_code, job_code) values (0007,0009)
+  INTO pref_skill(ks_code, job_code) values (0008,0009)
+  INTO pref_skill(ks_code, job_code) values (0009,0009)
   SELECT * FROM dual;
   
 INSERT ALL
@@ -119,6 +138,7 @@ INSERT ALL
   INTO jc_rel(soc, job_code) values(2,5)
   INTO jc_rel(soc, job_code) values(1,6)
   INTO jc_rel(soc, job_code) values(2,7)
+  INTO jc_rel(soc, job_code) values(2,9)
   SELECT * FROM dual;
   
 INSERT ALL
