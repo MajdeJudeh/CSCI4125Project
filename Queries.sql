@@ -17,7 +17,7 @@ WHERE Ex.end_date IS NULL AND comp_id = ?;                                      
 -- 2. List a company's staff BY salary in descending ORDER.
 SELECT first_name, last_name, salary
 FROM (jobs NATURAL JOIN experience Ex) INNER JOIN person Ps ON Ex.per_id = Ps.per_id
-  WHERE comp_id = ? AND end_date IS NULL AND pay_type = 'Salary'                ---variables: comp_id(test on 2)
+WHERE comp_id = ? AND end_date IS NULL AND pay_type = 'Salary'                  ---variables: comp_id(test on 2)
 ORDER BY salary DESC;
 --2 END COMMENT
 
@@ -492,7 +492,7 @@ WITH all_job_info
 AS( SELECT SOC, salary, start_date, end_date, pay_type, per_id, Jo.job_code 
     FROM (jobs Jo INNER JOIN jc_rel Jc  ON Jo.job_code = Jc.job_code) 
         INNER JOIN experience Exp1 ON Jo.job_code = Exp1.job_code
-    Where SOC = ?),                                                             ---variables: SOC(test on 2) 
+    WHERE SOC = ?),                                                             ---variables: SOC(test on 2) 
 ending_salary (SOC, end_sal, per_id)
 AS(SELECT SOC, salary, per_id
     FROM all_job_info
