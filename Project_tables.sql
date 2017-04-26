@@ -1,8 +1,3 @@
---Sean Naquin
---Majde Judeh
-
---table creation file
-
 CREATE TABLE company(
     comp_id INTEGER,
     website VARCHAR(100),
