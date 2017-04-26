@@ -20,7 +20,8 @@ public class Company{
 
       System.out.println("Enter the company's ID number");
       pStmt.setInt(1, input.nextInt());
-
+      input.nextLine();// Discard '\n'
+      
       System.out.println("Enter the company website");
       pStmt.setString(2, input.nextLine());
 

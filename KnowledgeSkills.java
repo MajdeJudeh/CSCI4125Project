@@ -22,7 +22,8 @@ public class KnowledgeSkills{
 
       System.out.println("Enter the skill code.");
       pStmt.setInt(1, input.nextInt());
-
+      input.nextLine();// Discard '\n'
+      
       System.out.println("Enter the skill title.");
       pStmt.setString(2, input.nextLine());
 

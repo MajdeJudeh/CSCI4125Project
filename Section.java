@@ -12,8 +12,8 @@ public class Section{
   }//end of
   public void insertRow(){
     PreparedStatement pStmt = null;
-    String insertStatement = "INSERT INTO section(sec_code, c_code, sec_no, semester, sec_year complete_date, " +
-                              "offered_by, sec_format, status, price) values (?, ?, ?, ?, ?, DATE ?, ?, ?, ?, ?)";
+    String insertStatement = "INSERT INTO section(sec_code, c_code, sec_no, semester, sec_year, complete_date, " +
+                              "offered_by, sec_format, status, price) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try{
       pStmt = connection.prepareStatement(insertStatement);
 
@@ -25,15 +25,18 @@ public class Section{
 
       System.out.println("Enter the section number for this class");
       pStmt.setInt(3, input.nextInt());
+      input.nextLine();// Discard '\n'
 
       System.out.println("Enter the semester the section was offered in the following format: FAL, SPR, SUM");
       pStmt.setString(4, input.nextLine());
 
       System.out.println("Enter the year the section was offered in.");
       pStmt.setInt(5, input.nextInt());
+      input.nextLine();// Discard '\n'
 
       System.out.println("Enter the day the section was completed in \"YYYY-MM-DD\" format");
-      pStmt.setString(6, input.nextLine());
+      String date = input.nextLine();
+      pStmt.setDate(6, java.sql.Date.valueOf(date));
 
       System.out.println("Enter the instructor's name.");
       pStmt.setString(7, input.nextLine());

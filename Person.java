@@ -19,6 +19,7 @@ public class Person{
 
       System.out.println("Enter the person's ID number");
       pStmt.setInt(1, input.nextInt());
+      input.nextLine();// Discard '\n'
 
       System.out.println("Enter the person's first name");
       pStmt.setString(2, input.nextLine());
@@ -31,9 +32,20 @@ public class Person{
 
       System.out.println("Enter the person's street number.");
       pStmt.setInt(5, input.nextInt());
+      input.nextLine();// Discard '\n'
 
       System.out.println("Enter the person's apt number. Hit enter if not applicable");
-      pStmt.setInt(6, input.nextInt());
+      try {
+        String aptNumber = input.nextLine();
+        System.out.println(aptNumber);
+        if(	!(aptNumber.isEmpty()) ){
+          pStmt.setInt(6, Integer.parseInt(aptNumber));
+        }
+        else
+          pStmt.setNull(6, java.sql.Types.INTEGER);
+      } catch (NumberFormatException e) {
+        e.printStackTrace();
+      }
 
       System.out.println("Enter the person's city");
       pStmt.setString(7, input.nextLine());
@@ -43,6 +55,7 @@ public class Person{
 
       System.out.println("Enter the person's zip code.");
       pStmt.setInt(9, input.nextInt());
+      input.nextLine();// Discard '\n'
 
       System.out.println("Enter the person's email address.");
       pStmt.setString(10, input.nextLine());

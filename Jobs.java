@@ -20,37 +20,36 @@ public class Jobs{
 
       System.out.println("Enter the job code");
       pStmt.setInt(1, input.nextInt());
+      input.nextLine();// Discard '\n'
+
 
       System.out.println("Enter the type of employment full-time/part-time/internship/etc");
       pStmt.setString(2, input.nextLine());
 
       System.out.println("Enter the pay rate for the job.");
       pStmt.setInt(3, input.nextInt());
+      input.nextLine();// Discard '\n'
+
 
       System.out.println("Enter the pay type for the job.");
       pStmt.setString(4, input.nextLine());
 
       System.out.println("Enter the company id of the company offering the job.");
       pStmt.setInt(5, input.nextInt());
+      input.nextLine();// Discard '\n'
+
 
       System.out.println("Enter the website link for the job.");
-      pStmt.setString(5, input.nextLine());
-
-      System.out.println("Enter the job title of the job.");
       pStmt.setString(6, input.nextLine());
 
-      System.out.println("Enter the city for the job.");
+      System.out.println("Enter the job title of the job.");
       pStmt.setString(7, input.nextLine());
 
-      System.out.println("Enter the state abbreviation for the job");
+      System.out.println("Enter the city for the job.");
       pStmt.setString(8, input.nextLine());
 
-      System.out.println("Enter the day of the month the job was created in \"dd\" format");
-      int day = input.nextInt();
-      System.out.println("Enter the month the job was created in \"mm\" format.");
-      int month = input.nextInt();
-      System.out.println("Enter the year the job was created in \"yyyy\" format.");
-      int year = input.nextInt();
+      System.out.println("Enter the state abbreviation for the job");
+      pStmt.setString(9, input.nextLine());
 
       pStmt.setDate(10, new java.sql.Date(new java.util.Date().getTime()));
       pStmt.executeUpdate();

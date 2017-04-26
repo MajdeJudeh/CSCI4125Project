@@ -21,6 +21,8 @@ public class JobCategory{
 
       System.out.println("Enter the SOC code.");
       pStmt.setInt(1, input.nextInt());
+      input.nextLine();// Discard '\n'
+
 
       System.out.println("Enter the job category title");
       pStmt.setString(2, input.nextLine());

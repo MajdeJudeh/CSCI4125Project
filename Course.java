@@ -15,24 +15,29 @@ public class Course{
   public void insertRow(){
     PreparedStatement pStmt = null;
     String insertStatement = "INSERT INTO course(c_code, course_title, course_level, " +
-                              "description, credits) values (?, ?, ?, ?, ?)";
+                              "description, credits, active) values (?, ?, ?, ?, ?, ?)";
     try{
       pStmt = connection.prepareStatement(insertStatement);
 
       System.out.println("Enter the course's ID number");
       pStmt.setInt(1, input.nextInt());
+      input.nextLine();// Discard '\n'
 
       System.out.println("Enter the course title");
       pStmt.setString(2, input.nextLine());
 
       System.out.println("Enter the course level");
       pStmt.setInt(3, input.nextInt());
+      input.nextLine();// Discard '\n'
 
       System.out.println("Enter the course description.");
       pStmt.setString(4, input.nextLine());
 
       System.out.println("Enter the credit value of the course.");
       pStmt.setInt(5, input.nextInt());
+
+      System.out.println("Enter the status of the course. 1=active \t 0=inactive.");
+      pStmt.setInt(6, input.nextInt());
 
       pStmt.executeUpdate();
     } catch (SQLException e){
