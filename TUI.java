@@ -35,12 +35,14 @@ public class TUI{
       }
     }while(userOption != 0);//end of do/while
   }//end of queryRunner
+
   public void dataChangeRunner(){
     int userOption;
     DataModifier changeData = new DataModifier(connection);
     do{
       System.out.println("Enter \"0\" to exit, otherwise enter the corresponding number to modify data in that table.");
-      System.out.printf("1 = Company \n 2 =  Job \n 3 = Job Category \n 4 = Course...");
+      System.out.printf(" 1 = Person \n2 =  Job \n 3 = Job Category \n 4 = Company \n 5 = Course \n" +
+                        " 6 = Section \n 7 = KnowledgeSkills \n 8 = NAICS \n");
       userOption = input.nextInt();
       if(userOption > 0 && userOption <= 4){
         changeData.change(userOption);
