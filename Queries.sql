@@ -31,7 +31,7 @@ AS(SELECT comp_id, salary
     FROM jobs NATURAL JOIN experience
     WHERE end_date IS NULL AND pay_type = 'Hourly')
 SELECT comp_id,  SUM(salary) AS Labor_Cost
-FROM Salarys_view
+FROM Salary_tmp
 GROUP BY comp_id 
 ORDER BY Labor_Cost DESC;
 --3 END COMMENT
@@ -51,22 +51,26 @@ WHERE per_id = ?;                                                               
 
 --6. List the skill gap of a worker between his/her jobs(s) and --his/her skills.
 SELECT DISTINCT ks_code
-FROM  req_skill NATURAL JOIN experience
-WHERE per_id = ? AND end_date IS NULL                                           ---variables: per_id(test on 6)
+FROM  req_skill NATURAL JOIN experience 
+WHERE per_id = 6 AND end_date IS NULL                                           ---variables: per_id(test on 6)
 MINUS
 SELECT ks_code
 FROM spec_rel
-WHERE per_id = ?;                                                               ---variables: per_id(test on 6)
+WHERE per_id = 6;                                                               ---variables: per_id(test on 6)
 --6 END COMMENT
 
 --7. List the required knowledge/skills of a job/ a job category --in a readable format. (two queries)
-SELECT skill_title AS requireed_skill, ks_code
+SELECT skill_title AS required_skill, ks_code
 FROM  req_skill NATURAL JOIN knowledge_skills
 WHERE job_code = ?;                                                             ---variables: job_code(test on 3)
 
 SELECT skill_title AS required_skill, ks_code
-FROM core_skill Cs NATURAL JOIN knowledge_skills
+FROM core_skill NATURAL JOIN knowledge_skills
 WHERE soc = ?;                                                                  ---variables: soc(test on 3)
+-- Alternative solution to part two.
+SELECT DISTINCT skill_title AS required_skill, ks_code
+FROM  knowledge_skills NATURAL JOIN req_skill NATURAL JOIN JC_rel 
+WHERE soc = ?;
 --7 END COMMENT
 
 --8 List a person's missing knowledge/skills for a specific job in a readable format.
@@ -378,7 +382,7 @@ WHERE EXISTS (SELECT Ps, COUNT(Ks)
           GROUP BY per_id));
 --18 END COMMENT
 
---19. For a specified job category and a given small number k, make a “missing-k”
+--19. For a specified job category and a given small number k, make a “missing-k�?
 --list that lists the people’s IDs andthe number of missing skills  for the
 --people who miss only up to k skills in the ascending order of missing skills.
 WITH missing_skill (per_id, ks_code) 

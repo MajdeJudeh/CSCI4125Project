@@ -14,39 +14,33 @@ public class TUI{
   }
   public void menuRunner(){
     System.out.println("Enter \"0\" to exit");
-    System.out.println("Enter \"1\" to run queries");
-    System.out.println("Enter \"2\" to modify tables.");
+    System.out.println("Enter \"1\" to run 8 - A");
+    System.out.println("Enter \"2\" to run 8 - B");
+    System.out.println("Enter \"3\" to run 8 - C");
+    System.out.println("Enter \"4\" to run 8 - D");
     menu(input.nextInt());
   }
 
   public void menu(int menuOption){
-    if(menuOption == 1) queryRunner();
-    else if(menuOption == 2) dataChangeRunner();
+         if(menuOption == 1) acceptEmployee();
+    else if(menuOption == 2) jobHunt();
+    else if(menuOption == 3) findPerson();
+    else if(menuOption == 4) careerPlanning();
   }
 
-  public void queryRunner(){
-      int userOption;
-      Query query = new Query(connection);
-    do{
-      System.out.println("Enter \"0\" to exit, otherwise enter one of the numbers of the queries to run them.");
-      userOption = input.nextInt();
-      if(userOption > 0 && userOption <= 28){
-          query.runQuery(userOption);
-      }
-    }while(userOption != 0);//end of do/while
-  }//end of queryRunner
+  public void acceptEmployee(){
 
-  public void dataChangeRunner(){
-    int userOption;
-    DataModifier changeData = new DataModifier(connection);
-    do{
-      System.out.println("Enter \"0\" to exit, otherwise enter the corresponding number to modify data in that table.");
-      System.out.printf(" 1 = Person \n2 =  Job \n 3 = Job Category \n 4 = Company \n 5 = Course \n" +
-                        " 6 = Section \n 7 = KnowledgeSkills \n 8 = NAICS \n");
-      userOption = input.nextInt();
-      if(userOption > 0 && userOption <= 8){
-        changeData.change(userOption);
-      }
-    }while(userOption != 0);
+  }//end of acceptEmployee
+
+  public void jobHunt(){
+
+  }
+
+  public void findPerson(){
+
+  }
+
+  public void careerPlanning(){
+
   }
 }//end of TUI
