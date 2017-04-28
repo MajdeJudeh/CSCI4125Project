@@ -67,10 +67,6 @@ WHERE job_code = ?;                                                             
 SELECT skill_title AS required_skill, ks_code
 FROM core_skill NATURAL JOIN knowledge_skills
 WHERE soc = ?;                                                                  ---variables: soc(test on 3)
--- Alternative solution to part two.
-SELECT DISTINCT skill_title AS required_skill, ks_code
-FROM  knowledge_skills NATURAL JOIN req_skill NATURAL JOIN JC_rel
-WHERE soc = ?;
 --7 END COMMENT
 
 --8 List a person's missing knowledge/skills for a specific job in a readable format.
@@ -382,7 +378,7 @@ WHERE EXISTS (SELECT Ps, COUNT(Ks)
           GROUP BY per_id));
 --18 END COMMENT
 
---19. For a specified job category and a given small number k, make a “missing-k��?
+--19. For a specified job category and a given small number k, make a “missing-k"?
 --list that lists the people’s IDs andthe number of missing skills  for the
 --people who miss only up to k skills in the ascending order of missing skills.
 WITH missing_skill (per_id, ks_code)
