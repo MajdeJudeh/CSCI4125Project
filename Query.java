@@ -271,7 +271,7 @@ public class Query{
         else if (userOption == 11){
           System.out.println("Find the cheapest course to make up one’s skill gap by showing the course to take and the cost (of the section price).");
           statstr = "WITH course_list (c_code, Min_price) AS " +
-                        "((SELECT c_code, MIN(price) FROM  section GROUP BY c_code) " +
+                        "(SELECT c_code, MIN(price) FROM  section GROUP BY c_code) " +
                     "SELECT DISTINCT Crs.c_code, sec_no, price " +
                     "FROM course_list Crs INNER JOIN section Sec ON Crs.c_code = Sec.c_code " +
                     "WHERE price = Min_price AND NOT EXISTS(SELECT ks_code " +
@@ -389,6 +389,7 @@ public class Query{
               "FROM spec_rel " +
               "WHERE per_id = ?)";
 
+          pStmt = connection.prepareStatement(statstr);
           System.out.println("Enter the person's ID number");
           pStmt.setInt(1, input.nextInt());
           rs = pStmt.executeQuery();
@@ -413,7 +414,7 @@ public class Query{
               "MINUS " +
               "SELECT ks_code " +
               "FROM spec_rel " +
-              "WHERE per_id = Prsn.per_id";
+              "WHERE per_id = Prsn.per_id)";
 
           pStmt = connection.prepareStatement(statstr);
           System.out.println("Enter job code");
@@ -697,6 +698,97 @@ public class Query{
             "HAVING SUM(salary) = (SELECT MAX(SUM(salary)) " +
                                   "FROM Salary_tmp " +
                                   "GROUP BY SOC)";
+
+          pStmt = connection.prepareStatement(statstr);
+          rs = pStmt.executeQuery();
+
+          while(rs.next()){
+            String soc = rs.getString("SOC");
+            System.out.println(soc);
+          }
+        }
+        else if (userOption == 25){
+          System.out.println("Find out the ratio between the people whose earnings increase and \n" +
+          "those whose earning decrease; find the average rate of earning improvement \n" +
+          "for the workers in a specific business sector.");
+
+          statstr = "WITH all_job_info " +
+            "AS( SELECT SOC, salary, start_date, end_date, pay_type, per_id, Jo.job_code " +
+                "FROM (jobs Jo INNER JOIN jc_rel Jc  ON Jo.job_code = Jc.job_code) " +
+                    "INNER JOIN experience Exp1 ON Jo.job_code = Exp1.job_code " +
+                "WHERE SOC = ?), " +
+            "ending_salary (SOC, end_sal, per_id) " +
+            "AS(SELECT SOC, salary, per_id " +
+                "FROM all_job_info " +
+                "WHERE end_date IS NULL AND pay_type = 'Salary' " +
+                "UNION " +
+                "SELECT SOC, salary * 1920, per_id " +
+                "FROM all_job_info " +
+                "WHERE end_date IS NULL AND pay_type = 'Hourly'), " +
+            "starting_salary (SOC, start_sal, per_id) " +
+            "AS(SELECT SOC, salary, per_id " +
+                "FROM all_job_info aji " +
+                "WHERE end_date IS NOT NULL AND pay_type = 'Salary' AND start_date = (SELECT MIN(start_date) " +
+                        "FROM experience Exp " +
+                        "WHERE Exp.per_id = aji.per_id AND Exp.job_code = aji.job_code AND end_date IS NOT NULL) " +
+                "UNION " +
+                "SELECT SOC, salary * 1920, per_id " +
+                "FROM all_job_info aji " +
+                "WHERE end_date IS NOT NULL AND pay_type = 'Hourly'  AND start_date = (SELECT MIN(start_date) " +
+                        "FROM experience Exp " +
+                        "WHERE Exp.per_id = aji.per_id AND Exp.job_code = aji.job_code AND end_date IS NOT NULL)) " +
+                "SELECT Ss.SOC, AVG(end_sal - start_sal ) AS Average_Salary_Increase " +
+                "FROM starting_salary Ss INNER JOIN ending_salary Es ON Ss. per_id = Es.per_id " +
+                "GROUP BY Ss.SOC";
+                ;
+
+          pStmt = connection.prepareStatement(statstr);
+          System.out.println("Enter an soc to evaluate.");
+          pStmt.setInt(1, input.nextInt());
+          rs = pStmt.executeQuery();
+
+          while(rs.next()){
+            String soc = rs.getString("SOC");
+            String avgSalIncrease = rs.getString("Average_Salary_Increase");
+            System.out.println(soc + "\t" + avgSalIncrease);
+          }
+        }
+        else if (userOption == 26){
+          System.out.println("Find the leaf-node job categories that have the most openings due to\n" +
+          "lack of qualified workers. If there are many opening jobs of a job category \n" +
+          "but at the same time there are many qualified jobless people. Then training \n" +
+          "cannot help fill up this type of job. What we want to find is such a job \n" +
+          "category that has the largest difference between vacancies (the unfilled \n" +
+          "jobs of this category) and the number of jobless people who are qualified \n" +
+          "for the jobs of his category.");
+
+          statstr = "WITH open_jobs AS " +
+                      "(SELECT  job_code " +
+                      "FROM jobs " +
+                      "MINUS " +
+                      "SELECT  job_code " +
+                      "FROM experience " +
+                      "WHERE end_date IS NULL), " +
+                    "qualified AS " +
+                      "(SELECT job_code " +
+                      "FROM open_jobs Oj " +
+                      "WHERE NOT EXISTS(SELECT ks_code AS Ks " +
+                            "FROM req_skill Ks " +
+                            "WHERE job_code = Oj.job_code " +
+                            "MINUS " +
+                            "SELECT ks_code " +
+                            "FROM spec_rel)), " +
+                    "qualification_difference AS " +
+                      "(SELECT job_code, SOC " +
+                      "FROM (SELECT job_code FROM open_jobs " +
+                            "MINUS " +
+                            "SELECT job_code FROM qualified) NATURAL JOIN jc_rel) " +
+                    "SELECT SOC " +
+                    "FROM qualification_difference " +
+                    "GROUP BY SOC " +
+                    "HAVING COUNT(job_code) = (SELECT MAX(COUNT(job_code)) " +
+                                              "FROM qualification_difference " +
+                                              "GROUP BY SOC)";
 
           pStmt = connection.prepareStatement(statstr);
           rs = pStmt.executeQuery();
