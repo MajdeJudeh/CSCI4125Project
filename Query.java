@@ -264,39 +264,38 @@ public class Query{
             String cCode = rs.getString("c_code");
             String section = rs.getString("sec_no");
             java.util.Date completeDate = rs.getDate("complete_date");
-            System.out.println(cCode + "\t" + section + "\t" + courseTitle);
+            System.out.println(cCode + "\t" + section + "\t" + completeDate);
           }
         }
 
         else if (userOption == 11){
           System.out.println("Find the cheapest course to make up one’s skill gap by showing the course to take and the cost (of the section price).");
-          statstr = "select distinct Fn as c_code, Bn as course_title, Sec.price as section_price " +
-          "from (select c_code as Fn, course_title as Bn from course) inner join section Sec on Fn = Sec.c_code " +
-          "where not exists( select * " +
-              "from (SELECT ks_code as Ks " +
-                    "FROM (SELECT per_id, ks_code, job_code " +
-                          "FROM person, ((knowledge_skills Ks NATURAL JOIN req_skill NATURAL JOIN jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr) " +
-                          "INNER JOIN job_category Jc ON Jc.soc = Jr.soc) " +
-                          "MINUS " +
-                          "SELECT per_id, ks_code, job_code " +
-                          "FROM (person NATURAL JOIN spec_rel NATURAL JOIN knowledge_skills Ks), ((jobs Jo Natural JOIN company NATURAL JOIN jc_rel Jr) " +
-                          "INNER JOIN job_category Jc ON Jc.soc = Jr.soc)) " +
-                    "WHERE per_id = ? and job_code = ?) " +
-              "where not exists( select * " +
-                "from course_skills C2 " +
-                "where C2.c_code = Fn and C2.ks_code = Ks))";
+          statstr = "WITH course_list (c_code, Min_price) AS " +
+                        "((SELECT c_code, MIN(price) FROM  section GROUP BY c_code) " +
+                    "SELECT DISTINCT Crs.c_code, sec_no, price " +
+                    "FROM course_list Crs INNER JOIN section Sec ON Crs.c_code = Sec.c_code " +
+                    "WHERE price = Min_price AND NOT EXISTS(SELECT ks_code " +
+                        "FROM req_skill Rs " +
+                        "WHERE job_code = ? AND NOT EXISTS( " +
+                            "SELECT ks_code " +
+                            "FROM course_skills Csk " +
+                            "WHERE Crs.c_code = Csk.c_code AND Csk.ks_code = Rs.ks_code) " +
+                        "MINUS " +
+                        "SELECT ks_code " +
+                        "FROM spec_rel " +
+                        "WHERE per_id = ?)";
           pStmt = connection.prepareStatement(statstr);
-          System.out.println("Enter the person's ID number");
-          pStmt.setInt(1, input.nextInt());
           System.out.println("Enter job code");
+          pStmt.setInt(1, input.nextInt());
+          System.out.println("Enter the person's ID number");
           pStmt.setInt(2, input.nextInt());
           rs = pStmt.executeQuery();
 
           while(rs.next()){
             String cCode = rs.getString("c_code");
-            String courseTitle = rs.getString("course_title");
-            int secPrice = rs.getInt("section_price");
-            System.out.println(cCode + "\t" + courseTitle + "\t" + secPrice);
+            String section = rs.getString("sec_no");
+            int price = rs.getInt("price");
+            System.out.println(cCode + "\t" + section + "\t" + price);
           }
         }
 
@@ -379,26 +378,42 @@ public class Query{
           }
         }
         else if (userOption == 13){
-          System.out.println("Skipped for now");
+          System.out.println("List all the job categories that a person is qualified for.");
+          statstr = "SELECT SOC AS job_category, category_title " +
+          "FROM job_category JCs " +
+          "WHERE NOT EXISTS(SELECT ks_code " +
+              "FROM core_skill " +
+              "WHERE soc = JCs.soc " +
+              "MINUS " +
+              "SELECT ks_code " +
+              "FROM spec_rel " +
+              "WHERE per_id = ?)";
+
+          System.out.println("Enter the person's ID number");
+          pStmt.setInt(1, input.nextInt());
+          rs = pStmt.executeQuery();
+
+          while(rs.next()){
+            String jobCategory = rs.getString("job_category");
+            String categoryTitle = rs.getString("category_title");
+            System.out.println(jobCategory + "\t" + categoryTitle);
+          }
+
         }
         else if (userOption == 14){
           System.out.println("Skipped for now");
         }
         else if (userOption == 15){
           System.out.println("List all the names along with the emails of the persons who are qualified for a job.  ");
-          statstr = "select first_name, last_name, email " +
-          "from person Prsn " +
-          "where not exists( select * " +
-              "from (SELECT ks_code as Ks " +
-                    "FROM (SELECT distinct per_id, ks_code, job_code " +
-                          "FROM person, req_skill Ks " +
-                          "MINUS " +
-                          "SELECT distinct per_id, ks_code, job_code " +
-                          "FROM (person NATURAL JOIN spec_rel Sr), jobs) " +
-                    "WHERE job_code = ?) " +
-              "where not exists( select * " +
-                "from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id " +
-                "where P2.per_id = Prsn.per_id and Sr.ks_code = Ks))";
+          statstr = "SELECT first_name, last_name, email " +
+          "FROM person Prsn " +
+          "WHERE NOT EXISTS(SELECT ks_code AS Ks " +
+              "FROM req_skill Ks " +
+              "WHERE job_code = ? " +
+              "MINUS " +
+              "SELECT ks_code " +
+              "FROM spec_rel " +
+              "WHERE per_id = Prsn.per_id";
 
           pStmt = connection.prepareStatement(statstr);
           System.out.println("Enter job code");
@@ -416,25 +431,31 @@ public class Query{
           System.out.println("When a company cannot find any qualified person for a job, a secondary solution is to find a person who is almost \n" +
           "qualified to the job. Make a \"missing-one\" list that lists people who miss only one skill for a specified job.");
 
-          statstr = "select first_name, last_name, email " +
-          "from person Prsn " +
-          "where exists (select Ps, count(Ks) " +
-              "from (SELECT distinct per_id Ps, ks_code as Ks " +
-                    "FROM (SELECT distinct per_id, ks_code, job_code " +
-                          "FROM person, req_skill  Ks " +
-                          "MINUS " +
-                          "SELECT distinct per_id, ks_code, job_code " +
-                          "FROM (person NATURAL JOIN spec_rel Sr), jobs) " +
-                    "WHERE job_code = ?) " +
-              "where not exists( select * " +
-                  "from person P2 inner join spec_rel Sr on P2.per_id = Sr.per_id " +
-                  "where P2.per_id = Prsn.per_id and Sr.ks_code = Ks) " +
-              "group by Ps " +
-              "having count(Ks) = 1)";
+          statstr = "SELECT first_name, last_name, email " +
+          "FROM person Ps " +
+          "WHERE EXISTS(WITH req_cont (cnt) " +
+              "AS(SELECT COUNT(ks_code) " +
+                    "FROM req_skill " +
+                    "WHERE job_code = ?), " +
+              "missing_skill (per_id, ks_code) " +
+              "AS(SELECT DISTINCT per_id, ks_code " +
+                    "FROM person, req_skill " +
+                    "WHERE job_code = ? " +
+                    "MINUS " +
+                    "SELECT per_id, ks_code " +
+                    "FROM spec_rel) " +
+              "SELECT per_id " +
+              "FROM missing_skill " +
+              "WHERE per_id = Ps.per_id " +
+              "GROUP BY per_id " +
+              "HAVING COUNT(ks_code) = (SELECT cnt - 1 " +
+                                        "FROM req_cont))";
 
           pStmt = connection.prepareStatement(statstr);
           System.out.println("Enter job code");
-          pStmt.setInt(1, input.nextInt());
+          int jobCode = input.nextInt();
+          pStmt.setInt(1, jobCode);
+          pStmt.setInt(2, jobCode);
           rs = pStmt.executeQuery();
 
           while(rs.next()){
@@ -509,10 +530,181 @@ public class Query{
           }
         }
         else if (userOption == 19){
-          System.out.println("19");
+          System.out.println("For a specified job category and a given small number k, make a 'missing-k' " +
+                              "list that lists the people’s IDs andthe number of missing skills  for the " +
+                              "people who miss only up to k skills in the ascending order of missing skills.");
+
+          statstr = "WITH missing_skill (per_id, ks_code) " +
+              "AS(SELECT DISTINCT per_id, ks_code " +
+                "FROM person, core_skill " +
+                "WHERE SOC = ? " +
+                "MINUS " +
+                "SELECT per_id, ks_code " +
+                "FROM spec_rel), " +
+              "req_cont (cnt) " +
+              "AS(SELECT MIN(COUNT(ks_code)) " +
+                "FROM core_skill NATURAL JOIN missing_skill " +
+                "WHERE SOC = ? " +
+                "GROUP BY per_id) " +
+            "SELECT per_id, COUNT(ks_code) AS Missing_skill_Ct " +
+            "FROM missing_skill Ms " +
+            "WHERE EXISTS( " +
+                "SELECT per_id " +
+                "FROM missing_skill " +
+                "WHERE per_id = Ms.per_id " +
+                "GROUP BY per_id " +
+                "HAVING COUNT(ks_code) <= ?) " +
+            "GROUP BY per_id " +
+            "ORDER BY Missing_skill_Ct ASC";
+
+          pStmt = connection.prepareStatement(statstr);
+          System.out.println("Enter a SOC code.");
+          int soc = input.nextInt();
+          pStmt.setInt(1, soc);
+          pStmt.setInt(2, soc);
+          System.out.println("Enter a k for missing-k");
+          pStmt.setInt(3, input.nextInt());
+          rs = pStmt.executeQuery();
+
+          while(rs.next()){
+            int perId = rs.getInt("per_id");
+            int count = rs.getInt("Missing_skill_Ct");
+            System.out.println(perId + "\t" + count);
+          }
         }
         else if (userOption == 20){
-          System.out.println("20");
+          System.out.println("Given a job category code and its corresponding missing-k list specified " +
+                              "in Question 19. Find every skill that is needed by at least one person in the " +
+                              "given missing-k list. List each skillID and the number of people who need it " +
+                              "in the descending order of the people counts");
+
+          statstr = "WITH missing_skill (per_id, ks_code) " +
+              "AS(SELECT DISTINCT per_id, ks_code " +
+                "FROM person, core_skill " +
+                "WHERE SOC = ? " +
+                "MINUS " +
+                "SELECT per_id, ks_code " +
+                "FROM spec_rel), " +
+              "req_cont (cnt) " +
+              "AS(SELECT MIN(COUNT(ks_code)) " +
+                "FROM core_skill NATURAL JOIN missing_skill " +
+                "WHERE SOC = ? " +
+                "GROUP BY per_id) " +
+            "SELECT ks_code, COUNT(per_id) AS Person_count " +
+            "FROM missing_skill Ms " +
+            "WHERE EXISTS( " +
+                "SELECT per_id " +
+                "FROM missing_skill " +
+                "WHERE per_id = Ms.per_id " +
+                "GROUP BY per_id " +
+                "HAVING COUNT(ks_code) <= ?) " +
+            "GROUP BY ks_code " +
+            "ORDER BY Person_count DESC";
+
+          pStmt = connection.prepareStatement(statstr);
+          System.out.println("Enter a SOC code.");
+          int soc = input.nextInt();
+          pStmt.setInt(1, soc);
+          pStmt.setInt(2, soc);
+          System.out.println("Enter a k for missing-k");
+          pStmt.setInt(3, input.nextInt());
+          rs = pStmt.executeQuery();
+
+          while(rs.next()){
+            int ksCode = rs.getInt("ks_code");
+            int pIDCount = rs.getInt("Person_count");
+            System.out.println(ksCode + "\t" + pIDCount);
+          }
+        }
+        else if (userOption == 21){
+          System.out.println("In a local or national crisis, we need to find all the people who once " +
+                              "held a job of the special job category identifier.");
+
+          statstr = "SELECT DISTINCT per_id " +
+              "FROM experience NATURAL JOIN jc_rel NATURAL JOIN job_category " +
+              "WHERE SOC = ?";
+
+          pStmt = connection.prepareStatement(statstr);
+          System.out.println("Enter a SOC code.");
+          pStmt.setInt(1, input.nextInt());
+          rs = pStmt.executeQuery();
+
+          while(rs.next()){
+            int perId = rs.getInt("per_id");
+            System.out.println(perId);
+          }
+        }
+        else if (userOption == 22){
+          System.out.println("Find all the unemployed people who once held a job of the " +
+                              "given job identifier.");
+
+          statstr = "SELECT per_id " +
+              "FROM experience " +
+              "WHERE job_code = ? AND end_date IS NOT NULL";
+
+          pStmt = connection.prepareStatement(statstr);
+          System.out.println("Enter a job code.");
+          pStmt.setInt(1, input.nextInt());
+          rs = pStmt.executeQuery();
+
+          while(rs.next()){
+            int perId = rs.getInt("per_id");
+            System.out.println(perId);
+          }
+        }
+        else if (userOption == 23){
+          System.out.println("Find out the biggest employer in terms of number of employees or \n" +
+          "the total amount of salaries and wages paid to employees.");
+
+          statstr = "WITH Salary_tmp " +
+            "AS(SELECT comp_id, salary " +
+                "FROM jobs NATURAL JOIN experience " +
+                "WHERE end_date IS NULL AND pay_type = 'Salary' " +
+                "UNION " +
+                "SELECT comp_id, salary * 1920 " +
+                "FROM jobs NATURAL JOIN experience " +
+                "WHERE end_date IS NULL AND pay_type = 'Hourly') " +
+            "SELECT comp_id " +
+            "FROM Salary_tmp " +
+            "GROUP BY comp_id " +
+            "HAVING SUM(salary) = (SELECT MAX(SUM(salary)) " +
+                                  "FROM Salary_tmp " +
+                                  "GROUP BY comp_id)";
+
+          pStmt = connection.prepareStatement(statstr);
+          rs = pStmt.executeQuery();
+
+          while(rs.next()){
+            String compID = rs.getString("comp_id");
+            System.out.println(compID);
+          }
+        }
+        else if (userOption == 24){
+          System.out.println("Find out the job distribution among business sectors; find out the biggest sector \n" +
+          "in terms of number of employees or the total amount of salaries and wages paid to employees.");
+
+          statstr = "WITH Salary_tmp " +
+            "AS(SELECT SOC, salary " +
+                "FROM jobs NATURAL JOIN jc_rel NATURAL JOIN experience " +
+                "WHERE end_date IS NULL AND pay_type = 'Salary' " +
+                "UNION " +
+                "SELECT SOC, salary * 1920 " +
+                "FROM jobs NATURAL JOIN jc_rel NATURAL JOIN experience " +
+                "WHERE end_date IS NULL AND pay_type = 'Hourly') " +
+            "SELECT SOC " +
+            "FROM Salary_tmp " +
+            "GROUP BY SOC " +
+            "HAVING SUM(salary) = (SELECT MAX(SUM(salary)) " +
+                                  "FROM Salary_tmp " +
+                                  "GROUP BY SOC)";
+
+          pStmt = connection.prepareStatement(statstr);
+          rs = pStmt.executeQuery();
+
+          while(rs.next()){
+            String soc = rs.getString("SOC");
+            System.out.println(soc);
+          }
         }
       //end of try
     } catch (SQLException e){
