@@ -32,7 +32,7 @@ AS(SELECT comp_id, salary
     WHERE end_date IS NULL AND pay_type = 'Hourly')
 SELECT comp_id,  SUM(salary) AS Labor_Cost
 FROM Salary_tmp
-GROUP BY comp_id 
+GROUP BY comp_id
 ORDER BY Labor_Cost DESC;
 --3 END COMMENT
 
@@ -51,12 +51,12 @@ WHERE per_id = ?;                                                               
 
 --6. List the skill gap of a worker between his/her jobs(s) and --his/her skills.
 SELECT DISTINCT ks_code
-FROM  req_skill NATURAL JOIN experience 
-WHERE per_id = 6 AND end_date IS NULL                                           ---variables: per_id(test on 6)
+FROM  req_skill NATURAL JOIN experience
+WHERE per_id = ? AND end_date IS NULL                                           ---variables: per_id(test on 6)
 MINUS
 SELECT ks_code
 FROM spec_rel
-WHERE per_id = 6;                                                               ---variables: per_id(test on 6)
+WHERE per_id = ?;                                                               ---variables: per_id(test on 6)
 --6 END COMMENT
 
 --7. List the required knowledge/skills of a job/ a job category --in a readable format. (two queries)
@@ -69,7 +69,7 @@ FROM core_skill NATURAL JOIN knowledge_skills
 WHERE soc = ?;                                                                  ---variables: soc(test on 3)
 -- Alternative solution to part two.
 SELECT DISTINCT skill_title AS required_skill, ks_code
-FROM  knowledge_skills NATURAL JOIN req_skill NATURAL JOIN JC_rel 
+FROM  knowledge_skills NATURAL JOIN req_skill NATURAL JOIN JC_rel
 WHERE soc = ?;
 --7 END COMMENT
 
@@ -81,7 +81,7 @@ FROM(SELECT ks_code
     MINUS
     SELECT ks_code
     FROM spec_rel
-    WHERE per_id = ?) NATURAL JOIN knowledge_skills;                             ---variables:  per_id(test on 3) 
+    WHERE per_id = ?) NATURAL JOIN knowledge_skills;                             ---variables:  per_id(test on 3)
 --8 END COMMENT
 
 --9 List the courses(course id and title) that each alone
@@ -92,7 +92,7 @@ SELECT c_code, course_title
 FROM course Crs
 WHERE NOT EXISTS(SELECT ks_code
     FROM req_skill Rs
-    WHERE job_code = ? AND NOT EXISTS(                                          ---variables:  job_code(test on 3) 
+    WHERE job_code = ? AND NOT EXISTS(                                          ---variables:  job_code(test on 3)
         SELECT ks_code
         FROM course_skills Csk
         WHERE Crs.c_code = Csk.c_code AND Csk.ks_code = Rs.ks_code)
@@ -113,7 +113,7 @@ SELECT Crs.c_code, sec_no, complete_date
     FROM course_list Crs INNER JOIN section Sec ON Crs.c_code = Sec.c_code
     WHERE complete_date = Min_cmplt AND NOT EXISTS(SELECT ks_code
         FROM req_skill Rs
-        WHERE job_code = ? AND NOT EXISTS(                                      ---variables:  job_code(test on 3) 
+        WHERE job_code = ? AND NOT EXISTS(                                      ---variables:  job_code(test on 3)
             SELECT ks_code
             FROM course_skills Csk
             WHERE Crs.c_code = Csk.c_code AND Csk.ks_code = Rs.ks_code)
@@ -134,7 +134,7 @@ SELECT DISTINCT Crs.c_code, sec_no, price
     FROM course_list Crs INNER JOIN section Sec ON Crs.c_code = Sec.c_code
     WHERE price = Min_price AND NOT EXISTS(SELECT ks_code
         FROM req_skill Rs
-        WHERE job_code = ? AND NOT EXISTS(                                      ---variables:  job_code(test on 3) 
+        WHERE job_code = ? AND NOT EXISTS(                                      ---variables:  job_code(test on 3)
             SELECT ks_code
             FROM course_skills Csk
             WHERE Crs.c_code = Csk.c_code AND Csk.ks_code = Rs.ks_code)
@@ -215,8 +215,8 @@ WHERE NOT EXISTS(SELECT ks_code
     MINUS
     SELECT ks_code
     FROM spec_rel
-    WHERE per_id = ?)                                                           ---variables:  per_id(test on 6)                     
---13 END COMMENT, implemented my own solution 
+    WHERE per_id = ?)                                                           ---variables:  per_id(test on 6)
+--13 END COMMENT, implemented my own solution
 
 
 
@@ -237,7 +237,7 @@ WHERE pay_rate = (SELECT MAX(pay_rate)
         WHERE NOT EXISTS( SELECT *
           FROM (person P2 INNER JOIN spec_rel Sr ON P2.per_id = Sr.per_id)
               INNER JOIN req_skill Rs ON Rs.ks_code = Sr.ks_code
-          WHERE Jo.job_code = Rs.job_code AND P2.per_id = Pid))) 
+          WHERE Jo.job_code = Rs.job_code AND P2.per_id = Pid)))
 AND NOT EXISTS( SELECT *
     FROM (SELECT Pid
           FROM (SELECT DISTINCT per_id AS Pid, ks_code, job_code
@@ -263,7 +263,7 @@ WHERE NOT EXISTS(SELECT ks_code AS Ks
          MINUS
          SELECT ks_code
          FROM spec_rel
-         WHERE per_id = Prsn.per_id);                                                 
+         WHERE per_id = Prsn.per_id);
 --15 END COMMENT
 
 --16. When a company canNOT find any qualified person for a job,
@@ -272,11 +272,11 @@ WHERE NOT EXISTS(SELECT ks_code AS Ks
 --people who miss ONly ONe skill for a specified job.
 SELECT first_name, last_name, email
 FROM person Ps
-WHERE EXISTS(WITH req_cont (cnt) 
+WHERE EXISTS(WITH req_cont (cnt)
       AS(SELECT COUNT(ks_code)
           FROM req_skill
           WHERE job_code = ?),                                                  ---variables: job_code(test on 3)
-      missing_skill (per_id, ks_code) 
+      missing_skill (per_id, ks_code)
       AS(SELECT DISTINCT per_id, ks_code
           FROM person, req_skill
           WHERE job_code = ?                                                    ---variables: job_code(test on 3)
@@ -382,17 +382,17 @@ WHERE EXISTS (SELECT Ps, COUNT(Ks)
           GROUP BY per_id));
 --18 END COMMENT
 
---19. For a specified job category and a given small number k, make a “missing-k�?
+--19. For a specified job category and a given small number k, make a “missing-k��?
 --list that lists the people’s IDs andthe number of missing skills  for the
 --people who miss only up to k skills in the ascending order of missing skills.
-WITH missing_skill (per_id, ks_code) 
+WITH missing_skill (per_id, ks_code)
   AS(SELECT DISTINCT per_id, ks_code
       FROM person, core_skill
       WHERE SOC = ?                                                             ---variables: SOC(test on 1)
       MINUS
       SELECT per_id, ks_code
       FROM spec_rel),
-  req_cont (cnt) 
+  req_cont (cnt)
   AS(SELECT MIN(COUNT(ks_code))
       FROM core_skill NATURAL JOIN missing_skill
       WHERE SOC = ?                                                             ---variables: SOC(test on 1)
@@ -413,14 +413,14 @@ ORDER BY Missing_skill_Ct ASC;
 --in Question 19. Find every skill that is needed by at least one person in the
 --given missing-k list. List each skillID and the number of people who need it
 --in the descending order of the people counts
-WITH missing_skill (per_id, ks_code) 
+WITH missing_skill (per_id, ks_code)
   AS(SELECT DISTINCT per_id, ks_code
       FROM person, core_skill
       WHERE SOC = ?                                                             ---variables: SOC(test on 1)
       MINUS
       SELECT per_id, ks_code
       FROM spec_rel),
-  req_cont (cnt) 
+  req_cont (cnt)
   AS(SELECT MIN(COUNT(ks_code))
       FROM core_skill NATURAL JOIN missing_skill
       WHERE SOC = ?                                                             ---variables: SOC(test on 1)
@@ -438,21 +438,21 @@ ORDER BY Person_count DESC;
 --20 END COMMENT
 
 
---21. In a local or national crisis, we need to find all the people who once 
+--21. In a local or national crisis, we need to find all the people who once
 --held a job of the special job category identifier.
 SELECT DISTINCT per_id
 FROM experience NATURAL JOIN jc_rel NATURAL JOIN job_category
-WHERE SOC = ?;                                                                  ---variables: SOC(test on 3) 
+WHERE SOC = ?;                                                                  ---variables: SOC(test on 3)
 --21 END COMMENT
 
---22. Find all the unemployed people who once held a job of the 
+--22. Find all the unemployed people who once held a job of the
 --given job identifier.
 SELECT per_id
 FROM experience
 WHERE job_code = ? AND end_date IS NOT NULL;                                    ---variables: job_code(test on 2)
 --22 END COMMENT
 
---23. Find out the biggest employer in terms of number of employees or 
+--23. Find out the biggest employer in terms of number of employees or
 --the total amount of salaries and wages paid to employees.
 WITH Salary_tmp
 AS(SELECT comp_id, salary
@@ -465,13 +465,13 @@ AS(SELECT comp_id, salary
 SELECT comp_id
 FROM Salary_tmp
 GROUP BY comp_id
-HAVING SUM(salary) = (SELECT MAX(SUM(salary)) 
+HAVING SUM(salary) = (SELECT MAX(SUM(salary))
                       FROM Salary_tmp
-                      GROUP BY comp_id); 
+                      GROUP BY comp_id);
 --23 END COMMENT
 
---24. Find out the job distribution among business sectors; find out the 
---biggest sector in terms of number of employees or the total amount of 
+--24. Find out the job distribution among business sectors; find out the
+--biggest sector in terms of number of employees or the total amount of
 --salaries and wages paid to employees.
 WITH Salary_tmp
 AS(SELECT SOC, salary
@@ -484,19 +484,19 @@ AS(SELECT SOC, salary
 SELECT SOC
 FROM Salary_tmp
 GROUP BY SOC
-HAVING SUM(salary) = (SELECT MAX(SUM(salary)) 
+HAVING SUM(salary) = (SELECT MAX(SUM(salary))
                       FROM Salary_tmp
-                      GROUP BY SOC); 
---24 END COMMENT 
+                      GROUP BY SOC);
+--24 END COMMENT
 
---25. Find out the ratio between the people whose earnings increase and 
---those whose earning decrease; find the average rate of earning improvement 
---for the workers in a specific business sector. 
+--25. Find out the ratio between the people whose earnings increase and
+--those whose earning decrease; find the average rate of earning improvement
+--for the workers in a specific business sector.
 WITH all_job_info
-AS( SELECT SOC, salary, start_date, end_date, pay_type, per_id, Jo.job_code 
-    FROM (jobs Jo INNER JOIN jc_rel Jc  ON Jo.job_code = Jc.job_code) 
+AS( SELECT SOC, salary, start_date, end_date, pay_type, per_id, Jo.job_code
+    FROM (jobs Jo INNER JOIN jc_rel Jc  ON Jo.job_code = Jc.job_code)
         INNER JOIN experience Exp1 ON Jo.job_code = Exp1.job_code
-    WHERE SOC = ?),                                                             ---variables: SOC(test on 2) 
+    WHERE SOC = ?),                                                             ---variables: SOC(test on 2)
 ending_salary (SOC, end_sal, per_id)
 AS(SELECT SOC, salary, per_id
     FROM all_job_info
@@ -522,12 +522,12 @@ FROM starting_salary Ss INNER JOIN ending_salary Es ON Ss. per_id = Es.per_id
 GROUP BY Ss.SOC;
 --25 END COMMENT
 
---26. Find the leaf-node job categories that have the most openings due to 
---lack of qualified workers. If there are many opening jobs of a job category 
---but at the same time there are many qualified jobless people. Then training 
---cannot help fill up this type of job. What we want to find is such a job 
---category that has the largest difference between vacancies (the unfilled 
---jobs of this category) and the number of jobless people who are qualified 
+--26. Find the leaf-node job categories that have the most openings due to
+--lack of qualified workers. If there are many opening jobs of a job category
+--but at the same time there are many qualified jobless people. Then training
+--cannot help fill up this type of job. What we want to find is such a job
+--category that has the largest difference between vacancies (the unfilled
+--jobs of this category) and the number of jobless people who are qualified
 --for the jobs of his category.
 
 WITH open_jobs AS
