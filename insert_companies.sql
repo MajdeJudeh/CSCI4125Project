@@ -139,6 +139,7 @@ INSERT ALL
   INTO jc_rel(soc, job_code) values(1,6)
   INTO jc_rel(soc, job_code) values(2,7)
   INTO jc_rel(soc, job_code) values(2,9)
+  INTO jc_rel(soc, job_code) values(2,8)
   SELECT * FROM dual;
   
 INSERT ALL
