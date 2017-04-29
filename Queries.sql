@@ -103,11 +103,7 @@ WHERE NOT EXISTS(SELECT ks_code
 --section information and the completion date
 WITH course_list (c_code, complete_date) AS
     (SELECT c_code, MIN(complete_date)
-    FROM  section
-    GROUP BY c_code),
-min_complete (Min_cmplt)AS
-    (SELECT MIN(complete_date)
-    FROM course_list Crs
+    FROM  section Crs
     WHERE NOT EXISTS(SELECT ks_code
         FROM req_skill Rs
         WHERE job_code = ? AND NOT EXISTS(                                      ---variables:  job_code(test on 3) 
@@ -117,31 +113,39 @@ min_complete (Min_cmplt)AS
         MINUS
         SELECT ks_code
         FROM spec_rel
-        WHERE per_id = ?))                                                      ---variables:  job_code(test on 3) 
-SELECT Crs.c_code, sec_no, Crs.complete_date
+        WHERE per_id = ?)                                                       ---variables:  per_id(test on 3) 
+    GROUP BY c_code),
+min_complete (min_cmplt)AS
+    (SELECT MIN(complete_date)
+    FROM course_list)                                                      
+SELECT distinct Crs.c_code, sec_no, Crs.complete_date
     FROM course_list Crs INNER JOIN section Sec ON Crs.c_code = Sec.c_code, min_complete
-    WHERE Crs.complete_date = Min_cmplt;   
+    WHERE Crs.complete_date = min_cmplt;
 --10 END COMMENT
 
 --11 Find the cheapest course to make up ONe?s skill gap BY
 --showing the course to take and the cost (of the section
 --price).
-WITH course_list (c_code, Min_price) AS
+WITH course_list (c_code, price) AS
     (SELECT c_code, MIN(price)
-    FROM  section
-    GROUP BY c_code)
-SELECT DISTINCT Crs.c_code, sec_no, price
-    FROM course_list Crs INNER JOIN section Sec ON Crs.c_code = Sec.c_code
-    WHERE price = Min_price AND NOT EXISTS(SELECT ks_code
+    FROM  section Crs
+    WHERE NOT EXISTS(SELECT ks_code
         FROM req_skill Rs
-        WHERE job_code = ? AND NOT EXISTS(                                      ---variables:  job_code(test on 3)
+        WHERE job_code = ? AND NOT EXISTS(                                      ---variables:  job_code(test on 3) 
             SELECT ks_code
             FROM course_skills Csk
             WHERE Crs.c_code = Csk.c_code AND Csk.ks_code = Rs.ks_code)
         MINUS
         SELECT ks_code
         FROM spec_rel
-        WHERE per_id = ?);                                                      ---variables:  per_id(test on 5)
+        WHERE per_id = ?)                                                       ---variables:  per_id(test on 3) 
+    GROUP BY c_code),
+min_price (m_price)AS
+    (SELECT MIN(price)
+    FROM course_list Crs)                                                      ---variables:  per_id(test on 3) 
+SELECT distinct Crs.c_code, sec_no, Crs.price
+    FROM course_list Crs INNER JOIN section Sec ON Crs.c_code = Sec.c_code, min_price
+    WHERE Crs.price = m_price;                                                     ---variables:  per_id(test on 3) 
 --11 END COMMENT
 
 --12 If query #9 returns NOThing, then find the course sets that
