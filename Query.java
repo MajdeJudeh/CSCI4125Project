@@ -184,7 +184,7 @@ public class Query{
           }//end of while
         }//end of Query 7
         else if (userOption == 8){
-          System.out.println("8");
+          System.out.println("List a person’s missing knowledge/skills for a specific job in a readable format.");
           statstr = "SELECT skill_title AS skill_lacked, ks_code " +
           "FROM(SELECT ks_code " +
                 "FROM req_skill " +

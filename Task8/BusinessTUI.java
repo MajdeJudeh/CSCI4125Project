@@ -12,27 +12,41 @@ public class BusinessTUI{
   }
   public void menuRunner(){
     System.out.println("Enter \"0\" to exit");
-    System.out.println("Enter \"1\" to run queries");
-    System.out.println("Enter \"2\" to modify tables.");
+    System.out.println("Enter \"1\" to insert an employee into your company.");
+    System.out.println("Enter \"2\" to search for jobs.");
+    System.out.println("Enter \"3\" to search for potential employees.");
+    System.out.println("Enter \"4\" to find the jobs in each category.");
     menu(input.nextInt());
   }
 
   public void menu(int menuOption){
-    if(menuOption == 1) queryRunner();
-    else if(menuOption == 2) dataChangeRunner();
+    if (menuOption != 0){
+           if(menuOption == 1) acceptEmployee();
+      else if(menuOption == 2) jobHunt();
+      else if(menuOption == 3) findPerson();
+      else if(menuOption == 4) careerPlanning();
+      System.out.println("\nTask completed, hit enter to continue");
+      input.nextLine();
+      input.nextLine();
+      menuRunner();
+
+    }
   }
 
-  public void queryRunner(){
-      int userOption;
-      Query query = new Query(connection);
-    do{
-      System.out.println("Enter \"0\" to exit, otherwise enter one of the numbers of the queries to run them.");
-      userOption = input.nextInt();
-      if(userOption > 0 && userOption <= 28){
-          query.runQuery(userOption);
-      }
-    }while(userOption != 0);//end of do/while
-  }//end of queryRunner
+  public void acceptEmployee(){
+    AcceptEmployee insertEmployee = new AcceptEmployee(connection);
+    insertEmployee.selectCompany();
+  }//end of acceptEmployee
 
+  public void jobHunt(){
 
+  }
+
+  public void findPerson(){
+
+  }
+
+  public void careerPlanning(){
+
+  }
 }//end of TUI
