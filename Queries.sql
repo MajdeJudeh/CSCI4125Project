@@ -142,10 +142,10 @@ WITH course_list (c_code, price) AS
     GROUP BY c_code),
 min_price (m_price)AS
     (SELECT MIN(price)
-    FROM course_list Crs)       
+    FROM course_list Crs)                                                      ---variables:  per_id(test on 3) 
 SELECT distinct Crs.c_code, sec_no, Crs.price
     FROM course_list Crs INNER JOIN section Sec ON Crs.c_code = Sec.c_code, min_price
-    WHERE Crs.price = m_price; 
+    WHERE Crs.price = m_price;                                                     ---variables:  per_id(test on 3) 
 --11 END COMMENT
 
 --12 If query #9 returns NOThing, then find the course sets that
@@ -543,10 +543,10 @@ WITH open_jobs AS
     WHERE end_date IS NULL),
 qualified AS
     (SELECT job_code
-    FROM open_jobs Oj
+    FROM jobs Jo
     WHERE NOT EXISTS(SELECT ks_code AS Ks
              FROM req_skill Ks
-             WHERE job_code = Oj.job_code
+             WHERE job_code = Jo.job_code
              MINUS
              SELECT ks_code
              FROM spec_rel)),
