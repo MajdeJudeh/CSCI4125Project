@@ -22,7 +22,7 @@ public class BusinessTUI{
   public void menu(int menuOption){
     if (menuOption != 0){
            if(menuOption == 1) acceptEmployee();
-      else if(menuOption == 2) jobHunt();
+      else if(menuOption == 2) searchJobs();
       else if(menuOption == 3) findPerson();
       else if(menuOption == 4) careerPlanning();
       System.out.println("\nTask completed, hit enter to continue");
@@ -38,8 +38,9 @@ public class BusinessTUI{
     insertEmployee.selectCompany();
   }//end of acceptEmployee
 
-  public void jobHunt(){
-
+  public void searchJobs(){
+    JobSearch jobSearch = new JobSearch(connection);
+    jobSearch.searchOptions();
   }
 
   public void findPerson(){
