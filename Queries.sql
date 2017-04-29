@@ -142,10 +142,10 @@ WITH course_list (c_code, price) AS
     GROUP BY c_code),
 min_price (m_price)AS
     (SELECT MIN(price)
-    FROM course_list Crs)                                                      ---variables:  per_id(test on 3) 
+    FROM course_list Crs)       
 SELECT distinct Crs.c_code, sec_no, Crs.price
     FROM course_list Crs INNER JOIN section Sec ON Crs.c_code = Sec.c_code, min_price
-    WHERE Crs.price = m_price;                                                     ---variables:  per_id(test on 3) 
+    WHERE Crs.price = m_price; 
 --11 END COMMENT
 
 --12 If query #9 returns NOThing, then find the course sets that
