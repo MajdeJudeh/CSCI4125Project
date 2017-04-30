@@ -18,6 +18,7 @@ public class JobSearch{
     System.out.println("\nThis program is used to search for jobs.\n\n");
     System.out.println("Select 1: to search by job category.");
     System.out.println("Select 2: to search by jobs categories you qualify for.");
+    System.out.println("Select 3: to find all jobs you qualify for.");
     System.out.println("Select 0: to exit.");
     option = input.nextInt();
     displayJobs(option);
@@ -36,6 +37,10 @@ public class JobSearch{
       }
       else if(userOption ==2){
         showQualifiedCategories();
+        selectJobCategory();
+      }
+      else if(userOption == 3){
+        displayQualifiedJobs();
       }
 
     } catch (SQLException e){
@@ -75,7 +80,8 @@ public class JobSearch{
     pStmt.setInt(1, option);
     rs = pStmt.executeQuery();
 
-    System.out.println("Job Code \tJob Title \t\tJob Type \tPay Rate \tPay Type \tCompany \t\tCity \t\tState \tWebsite");
+    System.out.printf("%-10s %-20s %-10s %-10s %-10s %-20s %-15s %-8s %-50s%n%n", "Job Code",
+                        "Job Title", "Job Type", "Pay Rate", "Pay Type", "Company", "City", "State", "Website");
     while(rs.next()){
       String jobCode = rs.getString("job_code");
       String jobTitle = rs.getString("job_title");
@@ -87,26 +93,69 @@ public class JobSearch{
       String state = rs.getString("state_abbr");
       String href = rs.getString("href");
 
-      System.out.println(jobCode + "\t\t" + jobTitle + "\t" + empMode + "\t" + payRate + "\t\t" + payType + "\t\t" + company +
-                          "\t\t" + city + "\t" + state + "\t" + href);
+      System.out.printf("%-10.10s %-20.20s %-10.10s %-10.10s %-10.10s %-20.20s %-15.15s %-8.8s %-50.50s%n", jobCode , jobTitle , empMode , payRate , payType , company, city, state, href);
     }
   }
 
   public void showQualifiedCategories() throws SQLException{
-    System.out.println("Here are the current jobs your company has posted.\n\n");
 
-    String listJobs = "SELECT job_code, job_title FROM Jobs WHERE comp_id = ?";
-    pStmt = connection.prepareStatement(listJobs);
-    pStmt.setInt(1, 1);
+
+    String listQualifiedCats = "SELECT SOC AS job_category, category_title " +
+    "FROM job_category JCs " +
+    "WHERE NOT EXISTS(SELECT ks_code " +
+        "FROM core_skill " +
+        "WHERE soc = JCs.soc " +
+        "MINUS " +
+        "SELECT ks_code " +
+        "FROM spec_rel " +
+        "WHERE per_id = ?)";
+
+    pStmt = connection.prepareStatement(listQualifiedCats);
+    System.out.println("Enter your ID number");
+    pStmt.setInt(1, input.nextInt());
     rs = pStmt.executeQuery();
 
-    System.out.println("Job Code \tJob Title\n");
+    System.out.println("Here are the current jobs in that job category.\n\n");
+    System.out.println("Category ID \tCategory Title\n");
+    while(rs.next()){
+      String jobCategory = rs.getString("job_category");
+      String categoryTitle = rs.getString("category_title");
+      System.out.println(jobCategory + "\t\t" + categoryTitle);
+    }
+
+  }
+
+  public void displayQualifiedJobs() throws SQLException{
+    String listJobs = "SELECT job_code, job_title, emp_mode, pay_rate, pay_type, company_name, city, state_abbr, href " +
+                      "FROM jobs Jo NATURAL JOIN company " +
+                      "WHERE NOT EXISTS(" +
+                      "SELECT ks_code " +
+                      "FROM req_skill Rs " +
+                      "WHERE Rs.job_code = Jo.job_code " +
+                      "MINUS " +
+                      "SELECT ks_code " +
+                      "FROM spec_rel " +
+                      "WHERE per_id = ?)";
+
+    pStmt = connection.prepareStatement(listJobs);
+    System.out.println("Enter your person ID");
+    pStmt.setInt(1, input.nextInt());
+    rs = pStmt.executeQuery();
+
+    System.out.printf("%-10s %-20s %-10s %-10s %-10s %-20s %-15s %-8s %-50s%n%n", "Job Code",
+                        "Job Title", "Job Type", "Pay Rate", "Pay Type", "Company", "City", "State", "Website");
     while(rs.next()){
       String jobCode = rs.getString("job_code");
       String jobTitle = rs.getString("job_title");
+      String empMode = rs.getString("emp_mode");
+      String payRate = rs.getString("pay_rate");
+      String payType = rs.getString("pay_type");
+      String company = rs.getString("company_name");
+      String city = rs.getString("city");
+      String state = rs.getString("state_abbr");
+      String href = rs.getString("href");
 
-      System.out.println(jobCode + "\t\t" + jobTitle);
-
+      System.out.printf("%-10.10s %-20.20s %-10.10s %-10.10s %-10.10s %-20.20s %-15.15s %-8.8s %-50.50s%n", jobCode , jobTitle , empMode , payRate , payType , company, city, state, href);
     }
-  }
-}//end of Query class
+  }//end of displayQualifiedJobs
+}//end of JobSearch class

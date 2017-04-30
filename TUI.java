@@ -30,7 +30,7 @@ public class TUI{
     do{
       System.out.println("Enter \"0\" to exit, otherwise enter one of the numbers of the queries to run them.");
       userOption = input.nextInt();
-      if(userOption > 0 && userOption <= 28){
+      if(userOption > 0 && userOption <= 26){
           query.runQuery(userOption);
       }
     }while(userOption != 0);//end of do/while
