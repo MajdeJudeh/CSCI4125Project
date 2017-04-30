@@ -421,7 +421,7 @@ WHERE SOC = ?;                                                                  
 --given job identifier.
 SELECT per_id
 FROM experience Ex
-WHERE job_code = 3 AND NOT EXISTS (SELECT per_id---variables: job_code(test on 2/3)
+WHERE job_code = 3 AND NOT EXISTS (SELECT per_id                                ---variables: job_code(test on 2/3)
                         FROM experience
                         WHERE Ex.per_id = per_id AND end_date IS NULL);                                    
 --22 END COMMENT, NOT EXIST ensures that the person currently holds no jobs
