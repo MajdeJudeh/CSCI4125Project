@@ -87,7 +87,7 @@ SELECT c_code, course_title
 FROM course Crs
 WHERE EXISTS(SELECT ks_code --ensures that the person is missing skills for the job
     FROM req_skill
-    WHERE job_code = 3
+    WHERE job_code = ?                                                          ---variables:  job_code(test on 3/10)
     MINUS
     SELECT ks_code
     FROM spec_rel
@@ -292,11 +292,11 @@ FROM person Ps
 WHERE EXISTS(WITH req_cont (cnt)
       AS(SELECT COUNT(ks_code)
           FROM req_skill
-          WHERE job_code = 8),                                                  ---variables: job_code(test on 3/8)
+          WHERE job_code = ?),                                                  ---variables: job_code(test on 3/8)
       missing_skill (per_id, ks_code)
       AS(SELECT DISTINCT per_id, ks_code
           FROM person, req_skill
-          WHERE job_code = 8                                                    ---variables: job_code(test on 3/8)
+          WHERE job_code = ?                                                    ---variables: job_code(test on 3/8)
           MINUS
           SELECT per_id, ks_code
           FROM spec_rel)
@@ -421,7 +421,7 @@ WHERE SOC = ?;                                                                  
 --given job identifier.
 SELECT per_id
 FROM experience Ex
-WHERE job_code = 3 AND NOT EXISTS (SELECT per_id                                ---variables: job_code(test on 2/3)
+WHERE job_code = ? AND NOT EXISTS (SELECT per_id                                ---variables: job_code(test on 2/3)
                         FROM experience
                         WHERE Ex.per_id = per_id AND end_date IS NULL);                                    
 --22 END COMMENT, NOT EXIST ensures that the person currently holds no jobs
@@ -470,7 +470,7 @@ WITH all_job_info
 AS( SELECT SOC, salary, start_date, end_date, pay_type, per_id, Jo.job_code
     FROM (jobs Jo INNER JOIN jc_rel Jc  ON Jo.job_code = Jc.job_code)
         INNER JOIN experience Exp1 ON Jo.job_code = Exp1.job_code
-    WHERE SOC = 4),                                                             ---variables: SOC(test on 2/4)
+    WHERE SOC = ?),                                                             ---variables: SOC(test on 2/4)
 ending_salary (SOC, end_sal, per_id)
 AS(SELECT SOC, salary, per_id
     FROM all_job_info
