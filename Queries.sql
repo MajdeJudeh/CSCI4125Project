@@ -420,9 +420,11 @@ WHERE SOC = ?;                                                                  
 --22. Find all the unemployed people who once held a job of the
 --given job identifier.
 SELECT per_id
-FROM experience
-WHERE job_code = ? AND end_date IS NOT NULL;                                    ---variables: job_code(test on 2/3)
---22 END COMMENT
+FROM experience Ex
+WHERE job_code = 3 AND NOT EXISTS (SELECT per_id---variables: job_code(test on 2/3)
+                        FROM experience
+                        WHERE Ex.per_id = per_id AND end_date IS NULL);                                    
+--22 END COMMENT, NOT EXIST ensures that the person currently holds no jobs
 
 --23. Find out the biggest employer in terms of number of employees or
 --the total amount of salaries and wages paid to employees.
