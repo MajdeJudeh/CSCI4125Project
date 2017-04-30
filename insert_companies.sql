@@ -238,6 +238,7 @@ INSERT ALL
   INTO person(per_id, first_name, last_name, street_name, street_number, apt_number, city, state_abbr, zip_code, email, GENDER) values(5,'Eliza', 'Burger', 'Coca Cola Parkway', 784, 1452, 'Sodatown', 'IA',78462,null,'female')
   INTO person(per_id, first_name, last_name, street_name, street_number, apt_number, city, state_abbr, zip_code, email, GENDER) values(6,'Frank', 'Johnson', 'Park Way', 112, null, 'New City Name', 'AL', 47815,'JeeMail@gmail.com','male')
   INTO person(per_id, first_name, last_name, street_name, street_number, apt_number, city, state_abbr, zip_code, email, GENDER) values(7,'Seth', 'Eman', 'Long Road',71784, null, 'Middle of Nowhere', 'FL',71154,null,'male')
+  INTO person(per_id, first_name, last_name, street_name, street_number, apt_number, city, state_abbr, zip_code, email, GENDER) values(8,'Josephine', 'Eman', 'Long Road',71784, null, 'Middle of Nowhere', 'FL',71154,null,'Female')
   SELECT * FROM dual;  
   
 INSERT ALL
@@ -256,6 +257,8 @@ INSERT ALL
   INTO takes(sec_code,  per_id,  grade) values(8,4,'D')
   INTO takes(sec_code,  per_id,  grade) values(8,5,'B')
   INTO takes(sec_code,  per_id,  grade) values(9,5,'I')
+  INTO takes(sec_code,  per_id,  grade) values(8,8,'B')
+  INTO takes(sec_code,  per_id,  grade) values(9,8,'I')
   INTO takes(sec_code,  per_id,  grade) values(2,5,'A')
   INTO takes(sec_code,  per_id,  grade) values(4,5,'A')
   INTO takes(sec_code,  per_id,  grade) values(8,6,'A')
@@ -280,6 +283,7 @@ INSERT ALL
   INTO person_phone(per_id, phone_number) values (6,8475012)
   INTO person_phone(per_id, phone_number) values (1,9412501)
   INTO person_phone(per_id, phone_number) values (7,8291410)
+  INTO person_phone(per_id, phone_number) values (8,8291570)
   SELECT * FROM dual; 
   
 INSERT ALL
@@ -322,5 +326,7 @@ INSERT ALL
   INTO experience(per_id,job_code,start_date,end_date,salary) values(7,3,DATE '2016-04-05',DATE '2016-08-05',50000) 
   INTO experience(per_id,job_code,start_date,end_date,salary) values(7,7,DATE '2016-08-07',DATE '2016-12-13', 100000) 
   INTO experience(per_id,job_code,start_date,end_date,salary) values(7,7,DATE '2016-12-13',null, 120000) 
-  INTO experience(per_id,job_code,start_date,end_date,salary) values(3,11,DATE '2016-11-13',null, 70000) 
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(3,11,DATE '2016-11-13',null, 90000) 
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(8,2,DATE '2016-4-10',DATE '2016-8-7', 42000)
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(5,3,DATE '2016-8-15',DATE '2017-1-13', 50000) 
   SELECT * FROM dual; 
