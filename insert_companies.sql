@@ -58,6 +58,8 @@ INSERT ALL
   INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0007, 'Full Time', 120000, 'Salary',0006 , 'QA Tester','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/QA-tester-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Gotham', 'IA', DATE '2016-08-02')
   INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0008, 'Full Time', 115000, 'Salary',0006 , 'Software Engineer','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/QA-tester-7e6c820a31c1167d?fccid=564040c6a12a690f', 'Washington D.C.', 'DC', DATE '2016-07-02')
   INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0009, 'Full Time', 300000, 'Salary',0003 , 'Very Cold Software Engineer','https://www.indeed.com/company/Noone-Reads-These-Anyway167d?fccid=564040c6a12a690f', 'Antarctica', 'DC', DATE '2014-01-05')
+  INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0010, 'Full Time', 75000, 'Salary',0006 , 'Java Analysis Engineer','https://www.indeed.com/company/Ultimate-Technical-Solutions,-Inc./jobs/j49urtc820a31c32r4id=564040c6a12a690f', 'Washington D.C.', 'DC', DATE '2016-07-03')
+  INTO jobs(job_code, emp_mode,pay_rate, pay_type, comp_id, job_title, href, city, state_abbr, dateStr) values (0011, 'Full Time', 85000, 'Salary',0001 , 'Super Help Desk Technician','https://www.indeed.com/company/Super-Ultimate-Technical-Solutions,-Inc./jobs/Help-Desk-Technician-7e6c820a31c1167d?fccid=564040c6a12a690f', 'New Orleans', 'LA', DATE '2016-02-05')
   SELECT * FROM dual;
   
 INSERT ALL
@@ -67,9 +69,11 @@ INSERT ALL
   INTO  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0004,'MVC','Familliar with Model View Controller', 2)
   INTO  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0005,'QA Testing','testing prgorams', 2)
   INTO  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0006,'Java(coffee)','making good coffee', 2)
-  INTO  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0007,'Java(coffee)','making better coffee', 3)
+  INTO  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0007,'Good Java(coffee)','making better coffee', 3)
   INTO  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0008,'Reverse Engineering','Analize function of compiled applications', 2)
   INTO  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0009,'Heuristics','Analyze and categorize software based on behaviours', 3)
+  INTO  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0010,'Algorithm Analysis','Analyze algorithms for efficiency and correctness', 3)
+  INTO  knowledge_skills(ks_code, skill_title,  description,  skill_level) values (0011,'Networks','Maintain and set up network protocols', 3)
   SELECT * FROM dual;
   
 INSERT ALL
@@ -99,6 +103,11 @@ INSERT ALL
   INTO req_skill(ks_code, job_code) values (0007,0009)
   INTO req_skill(ks_code, job_code) values (0008,0009)
   INTO req_skill(ks_code, job_code) values (0009,0009)
+  INTO req_skill(ks_code, job_code) values (0010,00010)
+  INTO req_skill(ks_code, job_code) values (001,00010)
+  INTO req_skill(ks_code, job_code) values (0010,00011)
+  INTO req_skill(ks_code, job_code) values (001,00011)
+  INTO req_skill(ks_code, job_code) values (0011,00011)
   SELECT * FROM dual;
   
 INSERT ALL
@@ -183,6 +192,8 @@ INSERT ALL
   INTO course(c_code, course_title, course_level, description, credits, active) values (3,'Intro to SQL Programming',4567,'learn to use the SQL programming language',3,1)
   INTO course(c_code, course_title, course_level, description, credits, active) values (4,'Data Structures',3100,'learn to use data structures and MVC',3,1)
   INTO course(c_code, course_title, course_level, description, credits, active) values (5,'Intro to Computers',1000,'learn how to find the power button',3,1)
+  INTO course(c_code, course_title, course_level, description, credits, active) values (6,'Algorithm Analysis',4210,'learn how to analyse algorithms',3,1)
+  INTO course(c_code, course_title, course_level, description, credits, active) values (7,'Networks',4350,'learn how to manage network protocols',3,1)
   SELECT * FROM dual;
   
 INSERT ALL
@@ -193,6 +204,8 @@ INSERT ALL
   INTO course_skills(ks_code,c_code) values(1,4)
   INTO course_skills(ks_code,c_code) values(5,4)
   INTO course_skills(ks_code,c_code) values(5,1)
+  INTO course_skills(ks_code,c_code) values(10,6)
+  INTO course_skills(ks_code,c_code) values(11,7)
   SELECT * FROM dual;
   
 INSERT ALL
@@ -212,6 +225,9 @@ INSERT ALL
   INTO section(sec_code, c_code,sec_no, semester, sec_year, complete_date, offered_by, sec_format, status, price) values (7, 2,001,'SUM',2016,DATE '2016-07-23','Toups','lecture','OPEN',400)
   INTO section(sec_code, c_code,sec_no, semester, sec_year, complete_date, offered_by, sec_format, status, price) values (8, 5,001,'FAL',2014,DATE '2014-12-10','Staff','lecture','FULL',200)
   INTO section(sec_code, c_code,sec_no, semester, sec_year, complete_date, offered_by, sec_format, status, price) values (9, 1,001,'SUM',2017,DATE '2017-07-25','Toups','lecture','OPEN',400)
+  INTO section(sec_code, c_code,sec_no, semester, sec_year, complete_date, offered_by, sec_format, status, price) values (10, 6,001,'FAL',2017,DATE '2017-12-10','Staff','lecture','FULL',300)
+  INTO section(sec_code, c_code,sec_no, semester, sec_year, complete_date, offered_by, sec_format, status, price) values (11, 6,001,'SPR',2018,DATE '2018-05-20','Staff','lecture','OPEN',400)
+  INTO section(sec_code, c_code,sec_no, semester, sec_year, complete_date, offered_by, sec_format, status, price) values (12, 7,001,'FAL',2018,DATE '2017-12-10','Staff','lecture','OPEN',600)
   SELECT * FROM dual;
 
 INSERT ALL
@@ -306,4 +322,5 @@ INSERT ALL
   INTO experience(per_id,job_code,start_date,end_date,salary) values(7,3,DATE '2016-04-05',DATE '2016-08-05',50000) 
   INTO experience(per_id,job_code,start_date,end_date,salary) values(7,7,DATE '2016-08-07',DATE '2016-12-13', 100000) 
   INTO experience(per_id,job_code,start_date,end_date,salary) values(7,7,DATE '2016-12-13',null, 120000) 
+  INTO experience(per_id,job_code,start_date,end_date,salary) values(3,11,DATE '2016-11-13',null, 70000) 
   SELECT * FROM dual; 
