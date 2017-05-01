@@ -41,10 +41,10 @@ public class TUI{
     DataModifier changeData = new DataModifier(connection);
     do{
       System.out.println("Enter \"0\" to exit, otherwise enter the corresponding number to modify data in that table.");
-      System.out.printf(" 1 = Person \n2 =  Job \n 3 = Job Category \n 4 = Company \n 5 = Course \n" +
+      System.out.printf(" 1 = Person \n 2 =  Job \n 3 = Job Category \n 4 = Company \n 5 = Course \n" +
                         " 6 = Section \n 7 = KnowledgeSkills \n 8 = NAICS \n");
       userOption = input.nextInt();
-      if(userOption > 0 && userOption <= 4){
+      if(userOption > 0 && userOption <= 8){
         changeData.change(userOption);
       }
     }while(userOption != 0);

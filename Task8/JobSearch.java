@@ -33,11 +33,11 @@ public class JobSearch{
     try{
       if (userOption == 1){
         showJobCategories();
-        selectJobCategory();
+        listJobs();
       }
       else if(userOption ==2){
         showQualifiedCategories();
-        selectJobCategory();
+        listJobs();
       }
       else if(userOption == 3){
         displayQualifiedJobs();
@@ -68,7 +68,7 @@ public class JobSearch{
     }
   }
 
-  public void selectJobCategory() throws SQLException{
+  public void listJobs() throws SQLException{
     System.out.println("Select a job category code to search for jobs in.");
     int option = input.nextInt();
 
@@ -115,7 +115,7 @@ public class JobSearch{
     pStmt.setInt(1, input.nextInt());
     rs = pStmt.executeQuery();
 
-    System.out.println("Here are the current jobs in that job category.\n\n");
+    System.out.println("Here are the job categories you qualify for.\n\n");
     System.out.println("Category ID \tCategory Title\n");
     while(rs.next()){
       String jobCategory = rs.getString("job_category");

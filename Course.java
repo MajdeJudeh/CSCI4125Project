@@ -70,4 +70,30 @@ public class Course{
       }
     }
   }//ebd of deleteRow
+
+  public void updateClass(){
+    PreparedStatement pStmt = null;
+    String updateStatement = "UPDATE course " +
+                             "SET active = ? " +
+                             "WHERE c_code = ?";
+    try{
+      pStmt = connection.prepareStatement(updateStatement);
+
+      System.out.println("Enter the course ID");
+      pStmt.setInt(2, input.nextInt());
+      System.out.println("Enter 0 to set course inactive.\nEnter 1 to set course active.");
+      pStmt.setInt(1, input.nextInt());
+
+      pStmt.executeUpdate();
+    } catch (SQLException e){
+      System.out.println(e.getMessage());
+    } finally {
+      try{
+        if(pStmt != null) pStmt.close();
+      }catch (SQLException e){
+        System.out.println(e.getMessage());
+      }
+    }
+
+  }
 }//end of Query class

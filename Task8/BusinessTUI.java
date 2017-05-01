@@ -44,10 +44,12 @@ public class BusinessTUI{
   }
 
   public void findPerson(){
-
+    PeopleSearch findPeople = new PeopleSearch(connection);
+    findPeople.selectPerson();
   }
 
   public void careerPlanning(){
-
+    CategoryJobs catJobs = new CategoryJobs(connection);
+    catJobs.jobCategories();
   }
 }//end of TUI

@@ -94,7 +94,8 @@ public class DataModifier{
       }//end of outer if for userOption = 4
 
       else if(userOption == 5){
-        System.out.printf("Enter 1 to insert a Course. \n Enter 2 to delete a Course. \n Any other number will exit the program. \n");
+        System.out.printf("Enter 1 to insert a Course. \nEnter 2 to delete a Course. " +
+                          "\nEnter 3 to update a Course's activity status. \nAny other number will exit the program. \n");
         userOption = input.nextInt();
 
         if(userOption == 1){
@@ -109,6 +110,11 @@ public class DataModifier{
           userOption = 5;
         }//end of inner else if 2
 
+        else if(userOption == 3){
+          Course updateClass = new Course(connection);
+          updateClass.updateClass();
+          userOption = 5;
+        }
         else userOption = 0;
 
       }//end of outer if for userOption = 5
