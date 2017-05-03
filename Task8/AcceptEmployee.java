@@ -27,7 +27,20 @@ public class AcceptEmployee{
 
       System.out.println("\nSelect the job you wish to hire an employee for.");
       int jobID = input.nextInt();
-      hirePerson(jobID);
+
+      String checkOpening = "SELECT COUNT(*) AS Count FROM experience WHERE job_code = ? AND END_DATE IS NULL";
+      PreparedStatement pStmt = connection.prepareStatement(checkOpening);
+
+      pStmt.setInt(1, jobID);
+      ResultSet rs = pStmt.executeQuery();
+
+      rs.next();
+      if(rs.getInt("Count") == 0){
+        hirePerson(jobID);
+      }
+      else{
+        System.out.println("This job is already occupied.");
+      }
 
     } catch (SQLException e){
       System.out.println(e.getMessage());
