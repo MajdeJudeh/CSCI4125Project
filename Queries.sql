@@ -513,13 +513,14 @@ WITH open_jobs AS
     WHERE end_date IS NULL),
 qualified AS
     (SELECT job_code
-    FROM jobs Jo
+    FROM jobs Jo, person Prsn
     WHERE NOT EXISTS(SELECT ks_code
              FROM req_skill
              WHERE job_code = Jo.job_code
              MINUS
              SELECT ks_code
-             FROM spec_rel)),
+             FROM spec_rel
+             WHERE per_id = Prsn.per_id)),
 qualification_difference AS
     (SELECT job_code, SOC
     FROM (SELECT job_code FROM open_jobs
